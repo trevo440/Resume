@@ -24,12 +24,12 @@ r = Rake(max_length=4)
 r.extract_keywords_from_text(key_skills)
 restrict_words = ("etc", "weve", "sound", "thorough", "also", "companies", "working", "degree", "one",
                   "experience", "including", "must", "part", "world", "well", "year", "trusted", "around", "specifically", "work", 
-                  "apply", "object", "strong", "university", "proficiency"
+                  "apply", "object", "strong", "university", "proficiency", "min", "allinea dd", "applicant resiliency", "articulately ability", "tier", "writing",
+                  "ability" 
                   )
 
-key_dict = {x[1].replace(",", "").replace(".","").replace(")", "").replace("skills", ""):x[0] for x in r.get_ranked_phrases_with_scores() if 1 < x[0] <= 7 and not any(value in x[1] for value in restrict_words)}
+key_dict = {x[1].replace(",", "").replace(".","").replace(")", "").replace("skills", ""):x[0] for x in r.get_ranked_phrases_with_scores() if 1 < x[0] <= 7 and not any(value in x[1] for value in restrict_words) and len(x[1]) >=4}
 
 i = 1
 for k, v in key_dict.items():
     print(f"{i} | {k}:{v}")
-    i += 1
