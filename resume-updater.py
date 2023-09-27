@@ -3,7 +3,7 @@ Created on Sep 25, 2023
 
 @author: trevo
 
-TODO: Use Data in database to create a heat-map of skills within field; update dictionary to match (also change to fuzz-matching terms)
+TODO: Start Parsing Skill Sections & Align with an assoociated dictionary for Visual Graphic + Re-Add accomplishments section
 '''
 #-----------------------------------------------------------------
 import PyPDF2 as pdf
@@ -41,7 +41,7 @@ resume.setStrokeColor("#707070")
 #header (static)
 #-----------------------------------------------------------------
 resume.setFont("Times-Bold", 18)
-resume.drawString(72, page_height-72, "Trevor Ewert")
+resume.drawString(72, page_height-72, f"Trevor Ewert - {JOB_TITLE}")
 
 resume.drawInlineImage("./ln.png", page_width-(2*72), page_height-72, width=25, height=25, preserveAspectRatio=True)
 resume.drawInlineImage("./gm-2.png", page_width-(1.5*72), page_height-73, width=30, height=30, preserveAspectRatio=True)
@@ -176,7 +176,7 @@ if JOB_DESC:
 
     resume.line(72, curr_head, page_width-72, curr_head)
     resume.setFont("Times-Roman", 13)
-    resume.drawString(72, curr_head - spacing-8, "Role Summary")
+    resume.drawString(72, curr_head - spacing-8, "Role Description")
     resume.line(72, curr_head -spacing -18, page_width-72, curr_head- spacing -18)
     
     curr_head = curr_head-spacing - 18
@@ -244,55 +244,13 @@ if JOB_DESC:
             i += 1
     
     curr_head = curr_head-(spacing*i) - 11
-    
+ 
+import random   
 if SKILL_LIST or True:
     
-    TECH_SKILL_DICT = {
-        "Research": 9.6,
-        "Analytical Skills": 8.7,
-        "Software Development": 8.2,
-        "SQL": 9.4,
-        "Python": 10,
-        "Java": 8.1,
-        "Data Analysis": 7.8,
-        "JavaScript": 7.5,
-        "Cloud Computing": 7.1,
-        "Operations": 6.5,
-        "Technical Understanding": 9.0,
-        "Data Cleaning": 8.4,
-        "Normalization": 8.6,
-        "Data Management": 8.8,
-        "Data Analysis": 7.6,
-        "Machine Learning": 7.8,
-        "Git": 8.0,
-        "Databases": 9.0,
-        "AWS": 7.5,
-        "Alteryx": 8.6,
-        "Data Mapping": 9.3,
-        "Data Structures": 9.4,
-        "Database Design": 9.1,
-        "Javascript": 8.7,
-        "Microsoft Excel": 7.8,
-        "Java": 8.0,
-        "PostgresSQL": 7.8,
-        "Microsoft SQL Server": 7.4,
-        "Problem Solving": 8.2,
-        "Microsoft Power BI": 7.5,
-        "HTML": 7.1,
-        "Business Intelligence": 7.4,
-        "TensorFlow": 8.5
-        }
-    
-    SOFT_SKILL_DICT = {
-        "Management": 7.4,
-        "Communication": 8.0,
-        "Leadership": 7.6,
-        "Teamwork": 7.2,
-        "Public Speaking": 8.4,
-        "Customer Success": 8.2,
-        "Deliverables": 9.1,
-        "Project Management": 8.2, 
-        }
+    TECH_SKILL_DICT = {}
+    with open(".\keywords.txt", "r") as f:
+        TECH_SKILL_DICT = {x:round(random.uniform(7.0, 9.9), 1) for x in f.read().split("\n")}
     
     def common(a, skill_string):
         common = []
@@ -300,24 +258,18 @@ if SKILL_LIST or True:
             if item.lower() in skill_string.lower():
                 common.append(item)
         return common
-                
+               
     tech = common(TECH_SKILL_DICT.keys(), SKILL_LIST)
-    soft = common(SOFT_SKILL_DICT.keys(), SKILL_LIST)
     
     import random
     
-    if len(tech) <= 2:
+    if len(tech) <= 4:
         tech += random.sample(TECH_SKILL_DICT.keys(), 2)
-    if len(tech) >= 6: 
-        tech = random.sample(tech, 5)
+    if len(tech) >= 7: 
+        tech = random.sample(tech, 6)
         
-    if len(soft) <= 1:
-        soft += random.sample(SOFT_SKILL_DICT.keys(), 2)
-    if len(soft) >= 4: 
-        soft = random.sample(tech, 3)   
     
     tech = {k:v for k,v in TECH_SKILL_DICT.items() if k in tech}
-    soft = {k:v for k,v in SOFT_SKILL_DICT.items() if k in soft}
     
     resume.line(72, curr_head, page_width-72, curr_head)
     resume.setFont("Times-Roman", 13)
@@ -330,11 +282,6 @@ if SKILL_LIST or True:
     
     i = 1
     for k, v in tech.items():
-        format_num = round(v)
-        resume.drawString(72, curr_head - ( i*2*spacing), f"|{'=' * format_num}{' '*(10-format_num)}| {k} {v}/10")
-        i += 1
-    
-    for k, v in soft.items():
         format_num = round(v)
         resume.drawString(72, curr_head - ( i*2*spacing), f"|{'=' * format_num}{' '*(10-format_num)}| {k} {v}/10")
         i += 1
@@ -354,7 +301,8 @@ writer = pdf.PdfWriter()
 writer.append_pages_from_reader(reader)
 writer.add_metadata({"/Title": f"{JOB_TITLE} Resume, for {COMPANY}", 
                     "/Author":"Trevor Ewert",
-                    "/AddInfo": "Some Sections of this Resume have been dynamically generated using NLP, custom designed software by Author"
+                    "/AddInfo": "Some Sections of this Resume have been dynamically generated using NLP, custom designed software by Author \
+                    To Learn More, view the project here: https://github.com/trevo440/Resume/blob/main/resume-updater.py"
                     })
 
 writer.add_uri(0, "https://www.linkedin.com/in/trevor-ewert-24459a13b/",
