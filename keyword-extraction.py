@@ -33,3 +33,7 @@ key_dict = {x[1].replace(",", "").replace(".","").replace(")", "").replace("skil
 i = 1
 for k, v in key_dict.items():
     print(f"{i} | {k}:{v}")
+  
+with open(".\keywords.txt", "w") as f:
+    for k, v in key_dict.items():
+        f.write(k + "\n")
