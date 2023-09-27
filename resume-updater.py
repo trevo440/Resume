@@ -3,7 +3,7 @@ Created on Sep 25, 2023
 
 @author: trevo
 
-TODO: Start Parsing Skill Sections & Align with an assoociated dictionary for Visual Graphic + Re-Add accomplishments section
+TODO: Throw in random info into Job Desc from database-other-roles-with-the-same-title to "humanize" summary value
 '''
 #-----------------------------------------------------------------
 import PyPDF2 as pdf
