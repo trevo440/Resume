@@ -3,7 +3,7 @@ Created on Sep 25, 2023
 
 @author: trevo
 
-TODO: Start Parsing Skill Sections & Align with an assoociated dictionary for Visual Graphic + Re-Add accomplishments section
+TODO: Use Data in database to create a heat-map of skills within field; update dictionary to match (also change to fuzz-matching terms)
 '''
 #-----------------------------------------------------------------
 import PyPDF2 as pdf
@@ -14,23 +14,17 @@ import sqlite3
 #-----------------------------------------------------------------
 #Database
 #-----------------------------------------------------------------
-conn = sqlite3.connect("C:\\Users\\trevo\\Downloads\\Resume\\Collection.db", isolation_level=None)
+conn = sqlite3.connect("Resume\\Collection.db", isolation_level=None)
 cur = conn.cursor()
 
 #-----------------------------------------------------------------
 #Set parameters
 #-----------------------------------------------------------------
-COMPANY = "Twine"
-JOB_TITLE = "Backend Developer"
+COMPANY = ""
+JOB_TITLE = ""
 JOB_DESC = '''
-Maintain and Extend Services: Maintain and improve a set of microservices written in Python and NodeJS to ensure high reliability, scalability, and performance
-Data Management & Model Development: Develop, create, and curate large datasets that will be used to train supervised machine learning models. Work on cleaning, processing, and verifying the integrity of data used for analysis. Train, evaluate, and fine-tune deep learning models using frameworks such as PyTorch
-Data Analytics: Analyze various aspects of the business to produce actionable insights and reporting that lead to increases in revenue, improved customer retention, or reduced operational costs
-AWS Management: Monitor and configure various AWS services such as S3 for storage, RDS for databases, Opensearch for search functionalities, and EKS for Kubernetes deployment to ensure smooth operations
 '''.replace("'", "")
-SKILL_LIST = '''Basic Software Engineering: Must have experience with Git for version control, Continuous Integration pipelines for automated testing, Docker for containerization, and an understanding of service-based applications
-Python: Proficiency in libraries such as PyTorch for deep learning, Jupyter for notebooks, NumPy for numerical operations, and Matplotlib for plotting and visualization
-Database Management: Practical experience with PostgreSQL and an understanding of relational databases. About Twine We're a thriving ecosystem of top-tier freelancers from around the world. Trusted by Fortune 500 companies and Silicon Valley startups alike, Twine is the go-to platform for mission-critical projects. With over half a million registered freelancers and a growing roster of 35,000+ companies, we've become the comprehensive solution for all things freelancing
+SKILL_LIST = '''
 '''.replace("'","")
 #----------UPDATE SQL---------------------------------------------
 text = f"INSERT INTO jobInfo VALUES ('{COMPANY}', '{JOB_TITLE}', '{JOB_DESC}', '{SKILL_LIST}');"
@@ -41,7 +35,7 @@ percent = 0.3
 page_height = 792.0
 page_width = 612.0
 #construct-document
-resume = Canvas(f"C:\\Users\\trevo\\Downloads\\Resume\\Tewert-{JOB_TITLE}-{COMPANY}.pdf", pagesize=(page_width, page_height))
+resume = Canvas(f"Resume\\Tewert-{JOB_TITLE}-{COMPANY}.pdf", pagesize=(page_width, page_height))
 resume.setStrokeColor("#707070")
 #-----------------------------------------------------------------
 #header (static)
@@ -355,7 +349,7 @@ resume.save()
 #-----------------------------------------------------------------
 #update meta-info & add hyperlinks
 #-----------------------------------------------------------------
-reader = pdf.PdfReader(f"C:\\Users\\trevo\\Downloads\\Resume\\Tewert-{JOB_TITLE}-{COMPANY}.pdf")
+reader = pdf.PdfReader(f"Resume\\Tewert-{JOB_TITLE}-{COMPANY}.pdf")
 writer = pdf.PdfWriter()
 writer.append_pages_from_reader(reader)
 writer.add_metadata({"/Title": f"{JOB_TITLE} Resume, for {COMPANY}", 
