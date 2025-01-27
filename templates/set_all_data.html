@@ -1,41 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Set Your Information</h2>
+    <div class="form-container">
+        <h2 class="page-title">Set Your Information</h2>
 
-<!-- Form Container -->
-<div class="form-container">
-    <form method="POST">
-        <!-- API Key Field (Private) -->
-        <div class="form-group">
-            <label for="api_key">Enter API Key:</label>
-            <input type="password" id="api_key" name="api_key" class="form-control" required placeholder="Enter your API key here">
-        </div>
+        <!-- Form Container -->
+        <form method="POST">
+            <!-- API Key Field (Private) -->
+            <div class="form-group">
+                <label for="api_key" class="form-label">Enter API Key:</label>
+                <input type="password" id="api_key" name="api_key" class="form-control" required placeholder="Enter your API key here">
+            </div>
 
-        <!-- Name Field -->
-        <div class="form-group">
-            <label for="name">Enter Name (Resume File Prefix):</label>
-            <input type="text" id="name" name="name" class="form-control" required placeholder="Enter your name here">
-        </div>
+            <!-- Name Field -->
+            <div class="form-group">
+                <label for="name" class="form-label">Enter Name (Resume File Prefix):</label>
+                <input type="text" id="name" name="name" class="form-control" required placeholder="Enter your name here">
+            </div>
 
-        <!-- Resume Text Field -->
-        <div class="form-group">
-            <label for="resume_text">Enter Resume Text:</label>
-            <textarea id="resume_text" name="resume_text" rows="5" class="form-control" required placeholder="Paste your resume text here"></textarea>
-        </div>
+            <!-- Resume Text Field -->
+            <div class="form-group">
+                <label for="resume_text" class="form-label">Enter Resume Text:</label>
+                <textarea id="resume_text" name="resume_text" rows="5" class="form-control" required placeholder="Paste your resume text here"></textarea>
+            </div>
 
-        <!-- Job Description Field -->
-        <div class="form-group">
-            <label for="job_desc">Enter Job Description:</label>
-            <textarea id="job_desc" name="job_desc" rows="5" class="form-control" required placeholder="Enter the job description here"></textarea>
-        </div>
+            <!-- Job Description Field -->
+            <div class="form-group">
+                <label for="job_desc" class="form-label">Enter Job Description:</label>
+                <textarea id="job_desc" name="job_desc" rows="5" class="form-control" required placeholder="Enter the job description here"></textarea>
+            </div>
 
-        <!-- Submit Button -->
-        <button type="submit" class="btn-submit">Submit</button>
-    </form>
-</div>
-
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit">Submit</button>
+        </form>
+    </div>
 {% endblock %}
-
-
-

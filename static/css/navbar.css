@@ -1,0 +1,51 @@
+/* Dark Mode Navbar */
+.navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background-color: #2e2e2e; /* Dark background */
+    border-bottom: 2px solid #444; /* Slightly lighter border */
+    position: relative;
+    width: 100%;
+}
+
+.navbar-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+    color: #f1f1f1; /* Light text color */
+}
+
+.navbar-links {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.navbar-links .btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+    text-align: center;
+    color: #f1f1f1; /* Light text color for buttons */
+    background-color: #444; /* Dark button background */
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+.navbar-links .btn:hover {
+    background-color: #666; /* Lighter background on hover */
+}
+
+/* Ensure responsive behavior */
+@media (max-width: 768px) {
+    .navbar-links {
+        flex-direction: column;
+        gap: 8px;
+    }
+}

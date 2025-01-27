@@ -1,0 +1,46 @@
+/* Current GPT Response */
+.cur-data {
+    flex: 1;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Light border for contrast */
+    border-radius: 12px; /* Rounded corners for modern look */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+}
+
+/* Header and Content Styling */
+.cur-data h4 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #f1f1f1; /* Light text for the title */
+}
+
+.cur-content {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 14px;
+    color: #f1f1f1; /* Light text color */
+}
+
+/* Styling for Each Item */
+.cur-item {
+    margin-bottom: 16px;
+}
+
+.cur-key {
+    font-weight: bold;
+    color: #f1f1f1; /* Light key text */
+}
+
+.cur-value {
+    margin-left: 16px;
+    word-wrap: break-word;
+    color: #ddd; /* Slightly lighter value text */
+}
+
+.cur-value ul {
+    list-style: disc;
+    margin: 4px 0 0 16px;
+    padding: 0;
+    color: #ddd; /* Ensure list items stand out */
+}

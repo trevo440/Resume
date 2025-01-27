@@ -1,41 +1,90 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container">
-        <h1 class="page-title">Automatic Resume Builder</h1>
-        
-        <!-- Loading Spinner -->
-        <div id="loading" class="loading" style="display:none;">
-            <div class="spinner"></div>
-            <p>Loading...</p>
-        </div>
 
-        <!-- Button to trigger the process -->
-        <div class="action-buttons">
-            <button id="start-process" onclick="startProcess()" class="btn primary-btn">Start Process</button>
-        </div>
+<!-- Navbar Section -->
+<nav class="navbar">
+    <h1 class="navbar-title">Automatic Resume Builder</h1>
+    <div class="navbar-links">
+        <!-- ADD: Create Resume with GPT // CACHE CALL -->
+        <button id="start-process" onclick="startProcess()" class="btn primary-btn">Process with GPT</button>
+        <a href="{{ url_for('logout') }}" class="btn secondary-btn">Clear Session</a> 
+    </div>
+</nav>
 
-        <!-- Job Description Update Form -->
-        <section class="job-desc-section">
-            <h3>Update Job Description</h3>
-            <form id="update-job-form" method="POST" action="{{ url_for('home') }}" class="form">
-                <textarea id="job-desc" name="job_desc" placeholder="Enter the job description here..." class="form-input">{{ session.get('job_desc', '') }}</textarea>
-                <button type="submit" class="btn secondary-btn">Update Job Description</button>
+<div class="container">
+    <!-- Job Description Section -->
+    <section class="job-desc-section">
+        <div class="section-header">
+            <h3 class="section-title">Job Description</h3>
+            <button type="submit" class="btn secondary-btn">Update Job Description</button>
+            <div id="loading" class="loading" style="display:none;">
+                <div class="spinner"></div>
+                <p>Loading...</p>
+            </div>
+        </div>
+        <form id="update-job-form" method="POST" action="{{ url_for('home') }}" class="form">
+            <textarea id="job-desc" name="job_desc" placeholder="Enter the job description here..." class="form-input job-desc-input">{{ session.get('job_desc', '') }}</textarea>
+        </form>
+    </section>
+
+    <div class="col">
+
+        <!-- Resume Version Select and Example Link -->
+        <section class="resume-options">
+            {% if cur %}
+            <a href="{{ url_for('download_pdf', resume_version=selected_version) }}" class="btn secondary-btn">Download Resume</a>
+            {% endif %}
+            <form id="resume-options-form">
+                <select id="resume-version" name="resume_version" class="form-control" onchange="setSelectedVersion()">
+                    <option value="basic">Basic</option>
+                    <option value="visual">Visual</option>
+                    <option value="graphics">Graphics</option>
+                </select>
+
+                <!-- Link to View Example -->
+                <a href="examples/basic" id="view-example-link" class="btn secondary-btn" target="_blank">View Example</a>
             </form>
         </section>
-
-        <!-- Display Current Data (cur) -->
+        
+        <!-- Current GPT Response Section -->
         <section class="cur-data">
             <h4>Current GPT Response</h4>
-            <pre>{{ cur }}</pre>
+            <div class="cur-content">
+                {% if cur %}
+                    <div class="cur-item">
+                        <span class="cur-key">Keywords:</span>
+                        <ul class="cur-value">
+                            {% for keyword in cur.keywords %}
+                                <li>{{ keyword }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="cur-item">
+                        <span class="cur-key">Job Title:</span>
+                        <span class="cur-value">{{ cur.job_title }}</span>
+                    </div>
+                    <div class="cur-item">
+                        <span class="cur-key">Job Tasks:</span>
+                        <div class="cur-value">
+                            {% for role, tasks in cur.job_task.items() %}
+                                <div class="cur-subitem">
+                                    <span class="cur-subkey">{{ role | capitalize }}:</span>
+                                    <ul>
+                                        {% for task in tasks %}
+                                            <li>{{ task }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <p>No processed data available.</p>
+                {% endif %}
+            </div>
         </section>
+    </div>    
+</div>
 
-        <!-- Logout and Download Links -->
-        <div class="links">
-            <a href="{{ url_for('logout') }}" class="link-btn">Clear Session and Logout</a>
-            {% if cur %}
-                <a href="{{ url_for('download_pdf') }}" class="link-btn">View Resume</a>
-            {% endif %}
-        </div>
-    </div>
 {% endblock %}

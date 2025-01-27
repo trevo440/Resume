@@ -1,0 +1,63 @@
+/* Body Background for Dark Mode */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #121212, #1e1e2f); /* Subtle gradient for visual interest */
+    color: #e4e4e4; /* Light text for contrast */
+    overflow-x: hidden;
+}
+
+/* General Layout Styles */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    background-color: #1e1e2f; /* Dark background for container */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+    transition: all 0.3s ease;
+}
+
+.container:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6); /* Slightly larger shadow on hover */
+}
+
+.page-title {
+    font-size: 2.5em;
+    color: #ffffff; /* White for the title */
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Subtle text shadow for emphasis */
+}
+
+/* New Column Class for Stacking Content */
+.col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between items */
+    width: 100%; /* Ensure it takes up full width */
+}
+
+/* Optional: Add margin for spacing between multiple columns */
+.col + .col {
+    margin-top: 20px;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 16px;
+    }
+    .form-container {
+        padding: 15px;
+    }
+    .page-title {
+        font-size: 2em;
+    }
+}

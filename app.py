@@ -89,7 +89,7 @@ def set_all_data():
 # UI
 # ---------------------------
 @app.route('/download_pdf')
-def download_pdf():
+def download_pdf(resume_version='basic'):
     gpt_response = session.get('gpt_response', '')
     if not gpt_response:
         return redirect(url_for('home'))
@@ -164,6 +164,9 @@ def update_pdf_metadata(pdf_path, metadata):
             pdf.docinfo[k] = v
         pdf.save(pdf_path)
 
+@app.route('/examples/<string:version>')
+def view_example(version):
+    pass
 
 # ---------------------------
 # LOGOUT

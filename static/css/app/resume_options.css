@@ -1,0 +1,70 @@
+/* Styling for the "Resume Options" section */
+.resume-options {
+    background-color: #333; /* Dark background for the section */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+}
+
+.resume-options form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Space out the form elements */
+}
+
+.resume-options .form-label {
+    font-size: 16px;
+    color: #f1f1f1; /* Light color for the label */
+    margin-bottom: 8px;
+}
+
+.resume-options .form-control {
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background-color: #555;
+    color: #f1f1f1;
+    transition: border-color 0.3s ease;
+    margin-top: 30px;
+}
+
+.resume-options .form-control:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.resume-options .btn.secondary-btn {
+    padding: 10px 20px;
+    background-color: #899fb8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.resume-options .btn.secondary-btn:hover {
+    background-color: #156cb1;
+}
+
+.resume-options a {
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .resume-options {
+        padding: 15px;
+    }
+
+    .resume-options .section-title {
+        font-size: 1.8em;
+    }
+
+    .resume-options .form-control {
+        font-size: 14px;
+    }
+}

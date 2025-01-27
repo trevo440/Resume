@@ -1,0 +1,97 @@
+/* General Form Styling */
+.form-container {
+    max-width: 600px;
+    margin: 0 auto; /* Center the form on the page */
+    padding: 20px;
+    background-color: #333; /* Dark background */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+/* Form Title */
+.page-title {
+    text-align: center;
+    font-size: 24px;
+    color: #f1f1f1; /* Light text color */
+    margin-bottom: 20px;
+}
+
+/* Form Field Styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Label Styling */
+.form-label {
+    display: block;
+    font-size: 16px;
+    color: #f1f1f1; /* Light text color for labels */
+    margin-bottom: 8px;
+}
+
+/* Input and Textarea Styles */
+.form-input, .form-control {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #444; /* Dark border */
+    background-color: #2c2c3a; /* Darker background for input fields */
+    color: #ddd; /* Light text color */
+    resize: vertical; /* Allows textareas to resize vertically */
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Focus State for Inputs */
+.form-input:focus, .form-control:focus {
+    border-color: #1f87ff; /* Bright blue border on focus */
+    background-color: #333345; /* Slightly lighter background on focus */
+    outline: none;
+}
+
+/* Placeholder Styling */
+.form-control::placeholder {
+    color: #888;
+}
+
+/* Textarea Specific Styles */
+textarea.form-control {
+    overflow: auto; /* Allows scrolling when necessary */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+textarea.form-control::-webkit-scrollbar {
+    display: none; /* Webkit-based browsers like Chrome, Safari */
+}
+
+/* Submit Button Styling */
+.btn-submit {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+
+.btn-submit:hover {
+    background-color: #0056b3;
+}
+
+/* Textarea Specific Styles */
+textarea.form-control {
+    overflow: auto; /* Allows scrolling when necessary */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+textarea.form-control::-webkit-scrollbar {
+    display: none; /* Webkit-based browsers like Chrome, Safari */
+}
+
+
