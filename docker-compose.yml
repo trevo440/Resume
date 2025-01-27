@@ -1,0 +1,22 @@
+services:
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+      - /app/__pycache__ 
+    environment:
+      FLASK_ENV: development
+      FLASK_APP: app.py
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+    command: flask run --host=0.0.0.0 --port=5000
+  
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"

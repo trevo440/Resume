@@ -1,0 +1,6 @@
+flask
+flask-session
+openai
+redis
+weasyprint
+pikepdf
