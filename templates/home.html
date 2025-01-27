@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="page-title">Automatic Resume Builder</h1>
+        
+        <!-- Loading Spinner -->
+        <div id="loading" class="loading" style="display:none;">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+
+        <!-- Button to trigger the process -->
+        <div class="action-buttons">
+            <button id="start-process" onclick="startProcess()" class="btn primary-btn">Start Process</button>
+        </div>
+
+        <!-- Job Description Update Form -->
+        <section class="job-desc-section">
+            <h3>Update Job Description</h3>
+            <form id="update-job-form" method="POST" action="{{ url_for('home') }}" class="form">
+                <textarea id="job-desc" name="job_desc" placeholder="Enter the job description here..." class="form-input">{{ session.get('job_desc', '') }}</textarea>
+                <button type="submit" class="btn secondary-btn">Update Job Description</button>
+            </form>
+        </section>
+
+        <!-- Display Current Data (cur) -->
+        <section class="cur-data">
+            <h4>Current GPT Response</h4>
+            <pre>{{ cur }}</pre>
+        </section>
+
+        <!-- Logout and Download Links -->
+        <div class="links">
+            <a href="{{ url_for('logout') }}" class="link-btn">Clear Session and Logout</a>
+            {% if cur %}
+                <a href="{{ url_for('download_pdf') }}" class="link-btn">View Resume</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

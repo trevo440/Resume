@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Set Your API Key</h2>
+<form method="POST">
+    <label for="job_desc" style="display: block; margin-bottom: 8px;">Enter Job Description:</label>
+    <textarea id="job_desc" name="job_desc" rows="5" cols="50" required
+              style="width: 100%; max-width: 500px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;"></textarea>
+    <button type="submit" style="margin-top: 12px; padding: 8px 16px; font-size: 16px; color: white; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer;">Prepare Resume</button>
+</form>
+{% endblock %}
