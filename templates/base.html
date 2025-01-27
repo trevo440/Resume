@@ -22,24 +22,42 @@
     </main>
 </body>
 <script>
-    function startProcess() {
+    function startProcess(event) {
+        // Prevent form from submitting
+        event.preventDefault();
+        
         // Show loading spinner
         document.getElementById("loading").style.display = "block";
         
-        // Make an AJAX request to the Flask server
-        fetch("/process_data")
-            .then(response => response.text())
-            .then(data => {
-                // Hide loading spinner after the process is complete
-                document.getElementById("loading").style.display = "none";
-                alert("Process Complete: " + data);
-                location.reload();
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                document.getElementById("loading").style.display = "none";
-            });
+        // Get the updated job description value
+        const jobDesc = document.getElementById("job-desc").value;
+
+        // First, send the updated job description to the Flask server
+        fetch("/update_job_desc", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ job_desc: jobDesc })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // After updating the job description, make the AJAX request to process data
+            return fetch("/process_data");
+        })
+        .then(response => response.text())
+        .then(data => {
+            // Hide loading spinner after the process is complete
+            document.getElementById("loading").style.display = "none";
+            alert("Process Complete: " + data);
+            location.reload();
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            document.getElementById("loading").style.display = "none";
+        });
     }
+
     let selectedVersion = 'basic'; // Default value
 
     // Function to handle changes in the resume version select dropdown

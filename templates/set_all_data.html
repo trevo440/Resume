@@ -12,26 +12,17 @@
                 <input type="password" id="api_key" name="api_key" class="form-control" required placeholder="Enter your API key here">
             </div>
 
-            <!-- Name Field -->
-            <div class="form-group">
-                <label for="name" class="form-label">Enter Name (Resume File Prefix):</label>
-                <input type="text" id="name" name="name" class="form-control" required placeholder="Enter your name here">
-            </div>
-
             <!-- Resume Text Field -->
             <div class="form-group">
                 <label for="resume_text" class="form-label">Enter Resume Text:</label>
                 <textarea id="resume_text" name="resume_text" rows="5" class="form-control" required placeholder="Paste your resume text here"></textarea>
             </div>
 
-            <!-- Job Description Field -->
-            <div class="form-group">
-                <label for="job_desc" class="form-label">Enter Job Description:</label>
-                <textarea id="job_desc" name="job_desc" rows="5" class="form-control" required placeholder="Enter the job description here"></textarea>
-            </div>
-
             <!-- Submit Button -->
             <button type="submit" class="btn-submit">Submit</button>
+            <div id="loading-container" class="loading-container">
+                <p class="loading-text"><i>Processing your information may take a few minutes at this stage.</i></p>
+            </div>
         </form>
     </div>
 {% endblock %}

@@ -2,7 +2,9 @@ from flask import Flask, render_template, redirect, request, session, url_for
 from flask_session import Session
 import redis
 from openai import OpenAI
-from lib.AgentInterface import PromptManager
+from lib.AgentInterfaceJD import PromptManager as PromptManagerJD
+from lib.AgentInterfaceRM import PromptManager as PromptManagerRM
+from lib.validators import ensure_keys_exist
 from flask import Flask, render_template, make_response
 from weasyprint import HTML
 import pikepdf
@@ -37,37 +39,41 @@ def check_session_data():
 # ---------------------------
 # HOME
 # ---------------------------
+@app.route('/update_job_desc', methods=['POST'])
+def update_job_desc():
+    data = request.get_json()
+    session['job_desc'] = data['job_desc']  # Update the session with the new job description
+    return {"message": "Job description updated"}, 200
+
 @app.route('/process_data')
 def process_data():
     resume_text = session.get('resume_text')
     api_key = session.get('api_key')
     job_desc = session.get('job_desc')
 
-    PM = PromptManager(
+    PM = PromptManagerJD(
         OpenAIclient = OpenAI(
             api_key=api_key
-        )
+        ),
+        first_context = str({
+            "applicant_resume": resume_text,
+            "job_description": job_desc,
+            "JOBS_TO_USE": str([k.get('job_title', '') for k in session['resume_sections']['Work Experience']['work_experience']])
+        })
     )
-    PM.run_instruct(context={
-        "applicant_resume": resume_text,
-        "job_description":job_desc
-    })
+    PM.run_instruct()
     cur = PM.cur_response
     session['gpt_response'] = cur
     
     return "Data processing complete!"
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def home():
-    if request.method == 'POST':
-        # Update the job description in the session
-        session['job_desc'] = request.form['job_desc']
-        return redirect(url_for('home'))
-
     return render_template(
         'home.html',
         cur=session.get('gpt_response', ''),
-        job_desc=session.get('job_desc', '')
+        job_desc=session.get('job_desc', ''),
+        res=session.get('resume_sections', '')
     )
 
 # ---------------------------
@@ -79,11 +85,81 @@ def set_all_data():
         # Save all the required fields to session
         session['api_key'] = request.form['api_key']
         session['resume_text'] = request.form['resume_text']
-        session['job_desc'] = request.form['job_desc']
-        session['name'] = request.form['name']
+        session['job_desc'] = ''
+    
+        resume_text = session.get('resume_text')
+        api_key = session.get('api_key')
+
+        PM = PromptManagerRM(
+            OpenAIclient = OpenAI(
+                api_key=api_key
+            ),
+            first_context = str({
+                "applicant_resume": resume_text,
+            })
+        )
+        PM.run_instruct()
+        cur = PM.cur_response
+        if not isinstance(cur, dict):
+            cur = {}
+        cur = ensure_keys_exist(cur)
+
+        session['resume_sections'] = cur
+        session['name'] = cur.get('Contact Information', '')
+
         return redirect(url_for('home'))
 
     return render_template('set_all_data.html')
+
+@app.route('/update_resume', methods=['POST'])
+def update_resume():
+
+    res = session.get('res', {})
+
+    # Contact Information
+    res['Contact Information'] = {
+        'full_name': request.form['contact_full_name'],
+        'phone_number': request.form['contact_phone_number'],
+        'email': request.form['contact_email'],
+        'linkedin': request.form['contact_linkedin'],
+        'website': request.form['contact_website'],
+        'address': request.form['contact_address']
+    }
+
+    # Summary or Objective
+    res['Summary or Objective'] = [request.form['summary_or_objective']]
+
+    # Skills
+    res['Skills'] = request.form['skills'].split(',')
+
+    # Work Experience
+    work_experience = []
+    for i in range(1, len(request.form) + 1):
+        if f"job_title_{i}" in request.form:
+            work_experience.append({
+                'job_title': request.form[f"job_title_{i}"],
+                'company_name': request.form[f"company_name_{i}"],
+                'dates_of_employment': request.form[f"dates_of_employment_{i}"],
+                'responsibilities': request.form[f"responsibilities_{i}"].split(',')
+            })
+    res['Work Experience'] = work_experience
+
+    # Education
+    education = []
+    for i in range(1, len(request.form) + 1):
+        if f"degree_{i}" in request.form:
+            education.append({
+                'degree': request.form[f"degree_{i}"],
+                'institution_name': request.form[f"institution_name_{i}"],
+                'graduation_date': request.form[f"graduation_date_{i}"]
+            })
+    res['Education'] = education
+
+    # Certifications, Projects, and other sections follow similar pattern...
+
+    session['res'] = res
+    return redirect(url_for('home'))  # Redirect back to the main page or wherever appropriate
+
 
 # ---------------------------
 # UI

@@ -94,4 +94,11 @@ textarea.form-control::-webkit-scrollbar {
     display: none; /* Webkit-based browsers like Chrome, Safari */
 }
 
+span {
+    font-size: .9rem; /* Slightly larger font size */
+    color: #817f7f; /* A neutral dark color */
+    padding: 0.2rem 0; /* Adds a bit of spacing around the text */
+    display: inline-block; /* Ensures consistent spacing if spans are on multiple lines */
+}
+
 
