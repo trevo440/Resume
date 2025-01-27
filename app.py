@@ -70,7 +70,6 @@ def home():
         job_desc=session.get('job_desc', '')
     )
 
-
 # ---------------------------
 # SET ALL DATA
 # ---------------------------
