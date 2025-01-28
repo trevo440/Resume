@@ -1,0 +1,185 @@
+/* Basic Stylesheet for Resume Template */
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: #444;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+}
+
+p, li {
+    margin: 5px 0;
+    font-size: 1rem;
+}
+
+ul {
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+/* Contact Information */
+.contact-information {
+    margin-bottom: 20px;
+}
+
+.contact-information p {
+    font-size: 1rem;
+    color: #555;
+}
+
+/* Summary or Objective */
+.summary-objective {
+    margin-bottom: 20px;
+}
+
+.summary-objective ul {
+    list-style-type: circle;
+}
+
+/* Skills */
+.skills {
+    margin-bottom: 20px;
+}
+
+.skills li {
+    display: inline-block;
+    background-color: #e8e8e8;
+    margin: 5px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+/* Work Experience */
+.work-experience {
+    margin-bottom: 20px;
+}
+
+.work-experience .job {
+    margin-bottom: 15px;
+}
+
+.work-experience .job h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.work-experience .job p {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.work-experience .job ul {
+    margin-top: 5px;
+    list-style-type: square;
+}
+
+/* Education */
+.education {
+    margin-bottom: 20px;
+}
+
+.education .degree {
+    margin-bottom: 10px;
+}
+
+.education .degree p {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Certifications */
+.certifications {
+    margin-bottom: 20px;
+}
+
+.certifications .certification {
+    margin-bottom: 10px;
+}
+
+.certifications .certification p {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Projects */
+.projects {
+    margin-bottom: 20px;
+}
+
+.projects .project {
+    margin-bottom: 15px;
+}
+
+.projects .project h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.projects .project ul {
+    margin-top: 5px;
+    list-style-type: circle;
+}
+
+/* Awards */
+.awards {
+    margin-bottom: 20px;
+}
+
+.awards .award {
+    margin-bottom: 10px;
+}
+
+.awards .award p {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Volunteer Experience */
+.volunteer-experience {
+    margin-bottom: 20px;
+}
+
+.volunteer-experience .volunteer {
+    margin-bottom: 15px;
+}
+
+.volunteer-experience .volunteer ul {
+    margin-top: 5px;
+    list-style-type: square;
+}
+
+/* Languages */
+.languages {
+    margin-bottom: 20px;
+}
+
+.languages p {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Publications */
+.publications {
+    margin-bottom: 20px;
+}
+
+.publications .publication {
+    margin-bottom: 10px;
+}
+
+.publications .publication p {
+    font-size: 0.95rem;
+    color: #555;
+}

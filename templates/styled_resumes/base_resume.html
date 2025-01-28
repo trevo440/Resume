@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Resume - {% block title %}{% endblock %}</title>
+    {% block style %}{% endblock %}
+</head>
+<body>
+    <div class="contact-information">
+        <h2>Contact Information</h2>
+        <p class="full-name">{{ contact_information.full_name }}</p>
+        <p class="phone-number">{{ contact_information.phone_number }}</p>
+        <p class="email">{{ contact_information.email }}</p>
+        <p class="linkedin">{{ contact_information.linkedin }}</p>
+        <p class="website">{{ contact_information.website }}</p>
+        <p class="address">{{ contact_information.address }}</p>
+    </div>
+
+    <div class="summary-objective">
+        <h2>Summary or Objective</h2>
+        <ul>
+            {% for item in summary_or_objective.summary %}
+                <li class="summary-item">{{ item }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="skills">
+        <h2>Skills</h2>
+        <ul>
+            {% for skill in skills.skills %}
+                <li class="skill-item">{{ skill }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="work-experience">
+        <h2>Work Experience</h2>
+        {% for experience in work_experience.work_experience %}
+            <div class="job">
+                <h3 class="job-title">{{ experience.job_title }}</h3>
+                <p class="company-name">{{ experience.company_name }}</p>
+                <p class="location">{{ experience.location }}</p>
+                <p class="dates-of-employment">{{ experience.dates_of_employment }}</p>
+                <ul>
+                    {% for responsibility in experience.responsibilities %}
+                        <li class="responsibility">{{ responsibility }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="education">
+        <h2>Education</h2>
+        {% for edu in education.education %}
+            <div class="degree">
+                <p class="degree-name">{{ edu.degree }}</p>
+                <p class="institution-name">{{ edu.institution_name }}</p>
+                <p class="graduation-date">{{ edu.graduation_date }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="certifications">
+        <h2>Certifications</h2>
+        {% for cert in certifications.certifications %}
+            <div class="certification">
+                <p class="certification-name">{{ cert.certification_name }}</p>
+                <p class="issuing-organization">{{ cert.issuing_organization }}</p>
+                <p class="date-issued">{{ cert.date_issued }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="projects">
+        <h2>Projects</h2>
+        {% for project in projects.projects %}
+            <div class="project">
+                <h3 class="project-title">{{ project.project_title }}</h3>
+                <p class="description">{{ project.description }}</p>
+                <ul>
+                    {% for tech in project.technologies_used %}
+                        <li class="technology">{{ tech }}</li>
+                    {% endfor %}
+                </ul>
+                <p class="project-link">{{ project.project_link }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="awards">
+        <h2>Awards and Honors</h2>
+        {% for award in awards_and_honors.awards %}
+            <div class="award">
+                <p class="award-name">{{ award.award_name }}</p>
+                <p class="issuing-organization">{{ award.issuing_organization }}</p>
+                <p class="date-awarded">{{ award.date_awarded }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="volunteer-experience">
+        <h2>Volunteer Experience</h2>
+        {% for volunteer in volunteer_experience.volunteer_experience %}
+            <div class="volunteer">
+                <p class="role-title">{{ volunteer.role_title }}</p>
+                <p class="organization-name">{{ volunteer.organization_name }}</p>
+                <p class="location">{{ volunteer.location }}</p>
+                <p class="dates-of-service">{{ volunteer.dates_of_service }}</p>
+                <ul>
+                    {% for responsibility in volunteer.responsibilities %}
+                        <li class="volunteer-responsibility">{{ responsibility }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="languages">
+        <h2>Languages</h2>
+        {% for lang in languages.languages %}
+            <p class="language">
+                {{ lang.language_name }} - {{ lang.proficiency_level }}
+            </p>
+        {% endfor %}
+    </div>
+
+    <div class="publications">
+        <h2>Publications</h2>
+        {% for pub in publications.publications %}
+            <div class="publication">
+                <p class="publication-title">{{ pub.publication_title }}</p>
+                <p class="publication-source">{{ pub.publication_source }}</p>
+                <p class="date-published">{{ pub.date_published }}</p>
+                <p class="publication-link">{{ pub.publication_link }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

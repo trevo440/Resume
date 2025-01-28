@@ -121,7 +121,7 @@ Given the following Resume JSON, and Job Requirements JSON:
     > Job Requirements Quanifiable Metrics (use high-performance scores, and real numbers.)
     > Job Requirements Keywords (If required_years, attempt to place in a prior and current job)
 > Add some amount of Job Requirements ATS Responsibilities statements
-    > These can be in work_experience responsibility, or projects.
+    > These can be in work_experience responsibility, summary, or projects.
 
 Return only the updated Resume JSON json string with the specified keys and content. Use "Not provided" in place of any empty values.
 
