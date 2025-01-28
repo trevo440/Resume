@@ -108,24 +108,24 @@ Statements:
 
 quantifiable: A list of metrics which align with the responsibilities of this position.
 ats: A condensed list of the responsibilities, as if one was currently working this role, to be listed in their resume.
+Return only the json string with the specified keys and content. Use "Not provided" in place of any empty values.
 
 Job Description: 
 """
 
-jd_instructions = [
-    {
-        "task": "Utilize this job description to produce values that will help get a candidate through an ATS, without including niche-industry-specifics.",
-        "details": "Your response should fit into a Python dictionary of \
-                    {'keywords': ['keyword_1', 'keyword_phrase 2', etc.], \
-                    'job_title': 'name_of_job', \
-                    'job_task': {'JOB_TO_USE_1 (get this from supplied jobs above)': ['phrased_for_missing_details', etc], 'JOB_TO_USE_2': ['other_phrases_for_missing_details', etc]} \
-                    } - limit job tasks to 3, and try to make sure there is enough context to help improve with scoring. Format the job tasks as sentences, with capital first letter and ending with a period."
-    },
-    {
-        "task": "GPT Response to be usable in programming loop",
-        "details": "Return the Python dictionary in the correct format only and NOTHING ELSE. Include ALL keys, even if they are empty."
-    },
-] 
+intersect_prompt = """
+Given the following Resume JSON, and Job Requirements JSON:
+> IGNORE THE Actions of Requirements
+> DO NOT ALTER THE STRUCTURE OR KEYS OF THE Resume JSON
+> Intersect various work_experience responsibility statements with the following:
+    > Job Requirements Quanifiable Metrics (use high-performance scores, and real numbers.)
+    > Job Requirements Keywords (If required_years, attempt to place in a prior and current job)
+> Add some amount of Job Requirements ATS Responsibilities statements
+    > These can be in work_experience responsibility, or projects.
+
+Return only the updated Resume JSON json string with the specified keys and content. Use "Not provided" in place of any empty values.
+
+"""
 
 class PromptManager:
 
@@ -152,7 +152,7 @@ class PromptManager:
         return data
 
         
-    def assess_jd(self, resume_text, job_description) -> dict:
+    def assess_jd(self, job_description) -> dict:
         job_description = self.cleaner.no_quote(job_description)
         instruct = jd_prompt + job_description
 
@@ -165,8 +165,23 @@ class PromptManager:
 
         response = completion.choices[0].message.content 
         response = self.cleaner.ensure_gpt_format(response)
-        print(response)
-        
+
+        return json.loads(response)
+    
+    def intersect(self, resume_sections, job_description) -> dict:
+        instruct = intersect_prompt + "Resume JSON: " + str(resume_sections) \
+            + "\n" + "Job Requirements JSON: " + str(job_description)
+
+        completion = self.OpenAIclient.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": f"Execute these instructions: {str(instruct)}" },
+            ]
+        )
+
+        response = completion.choices[0].message.content 
+        response = self.cleaner.ensure_gpt_format(response)
+
         return json.loads(response)
 
     

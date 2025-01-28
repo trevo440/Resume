@@ -46,9 +46,9 @@ def update_job_desc():
 
 @app.route('/process_data')
 def process_data():
-    resume_text = session.get('resume_text')
     api_key = session.get('api_key')
     job_desc = session.get('job_desc')
+    resume_sections = session.get('resume_sections')
 
     PM = PromptManager(
         OpenAIclient = OpenAI(
@@ -57,10 +57,16 @@ def process_data():
     )
     
     cur = PM.assess_jd(
-        resume_text=resume_text,
         job_description=job_desc
     )
+    
+    intersect = PM.intersect(
+        resume_sections = resume_sections,
+        job_description = cur
+    )
+
     session['gpt_response'] = cur
+    session['resume_sections'] = intersect
     
     return "Data processing complete!"
 
@@ -162,30 +168,12 @@ def update_resume():
 @app.route('/download_pdf')
 def download_pdf(resume_version='basic'):
     gpt_response = session.get('gpt_response', '')
-    if not gpt_response:
-        return redirect(url_for('home'))
-    
-    if 'keywords' not in gpt_response:
-        gpt_response['keywords'] = []
-
-    if 'job_title' not in gpt_response:
-        gpt_response['job_title'] = ''
-
-    if 'job_task' not in gpt_response or not isinstance(gpt_response['job_task'], dict):
-        gpt_response['job_task'] = {'ml_engineer': [], 'dev_ops': []}
-    
-    if 'ml_engineer' not in gpt_response['job_task'].keys():
-        gpt_response['job_task']['ml_engineer'] = []
-    
-    if 'dev_ops' not in gpt_response['job_task'].keys():
-        gpt_response['job_task']['dev_ops'] = []
 
     current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     name = session.get('name', '')
     job_title = gpt_response['job_title']
     keywords = gpt_response['keywords']
 
-    print(gpt_response)
     rendered_html = render_template(
         'resume_one.html',
         author=name,
