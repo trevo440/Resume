@@ -22,6 +22,11 @@
     </main>
 </body>
 <script>
+    function cleanInput(input) {
+        // Remove non-UTF-8 characters and control characters
+        return input.replace(/[^\u0000-\u007F]+/g, ''); // Keeps ASCII only (UTF-8 safe for JSON)
+    }
+
     function startProcess(event) {
         // Prevent form from submitting
         event.preventDefault();
@@ -33,12 +38,16 @@
         const jobDesc = document.getElementById("job-desc").value;
 
         // First, send the updated job description to the Flask server
+
+        const cleanedJobDesc = cleanInput(jobDesc);
+        const body = JSON.stringify({ job_desc: cleanedJobDesc });
+        
         fetch("/update_job_desc", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ job_desc: jobDesc })
+            body: body
         })
         .then(response => response.json())
         .then(data => {

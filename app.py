@@ -83,8 +83,6 @@ def set_all_data():
         session['api_key'] = request.form['api_key']
         session['resume_text'] = request.form['resume_text']
         session['job_desc'] = ''
-        if 'job_desc' in request.form:
-            session['job_desc'] = request.form['job_desc']
                     
         resume_text = session.get('resume_text')
         api_key = session.get('api_key')

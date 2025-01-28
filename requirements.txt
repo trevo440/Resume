@@ -4,3 +4,4 @@ openai
 redis
 weasyprint
 pikepdf
+demjson3
