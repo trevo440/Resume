@@ -2,8 +2,7 @@ from flask import Flask, render_template, redirect, request, session, url_for
 from flask_session import Session
 import redis
 from openai import OpenAI
-from lib.AgentInterfaceJD import PromptManager as PromptManagerJD
-from lib.AgentInterfaceRM import PromptManager as PromptManagerRM
+from lib.AgentInterface import PromptManager
 from lib.validators import ensure_keys_exist
 from flask import Flask, render_template, make_response
 from weasyprint import HTML
@@ -51,18 +50,16 @@ def process_data():
     api_key = session.get('api_key')
     job_desc = session.get('job_desc')
 
-    PM = PromptManagerJD(
+    PM = PromptManager(
         OpenAIclient = OpenAI(
             api_key=api_key
-        ),
-        first_context = str({
-            "applicant_resume": resume_text,
-            "job_description": job_desc,
-            "JOBS_TO_USE": str([k.get('job_title', '') for k in session['resume_sections']['Work Experience']['work_experience']])
-        })
+        )
     )
-    PM.run_instruct()
-    cur = PM.cur_response
+    
+    cur = PM.assess_jd(
+        resume_text=resume_text,
+        job_description=job_desc
+    )
     session['gpt_response'] = cur
     
     return "Data processing complete!"
@@ -86,22 +83,21 @@ def set_all_data():
         session['api_key'] = request.form['api_key']
         session['resume_text'] = request.form['resume_text']
         session['job_desc'] = ''
-    
+        if 'job_desc' in request.form:
+            session['job_desc'] = request.form['job_desc']
+                    
         resume_text = session.get('resume_text')
         api_key = session.get('api_key')
 
-        PM = PromptManagerRM(
+        PM = PromptManager(
             OpenAIclient = OpenAI(
                 api_key=api_key
             ),
-            first_context = str({
-                "applicant_resume": resume_text,
-            })
         )
-        PM.run_instruct()
-        cur = PM.cur_response
-        if not isinstance(cur, dict):
-            cur = {}
+
+        cur = PM.pull_resume(
+            resume_text=resume_text
+        )
         cur = ensure_keys_exist(cur)
 
         session['resume_sections'] = cur
@@ -125,6 +121,7 @@ def update_resume():
         'website': request.form['contact_website'],
         'address': request.form['contact_address']
     }
+    session['name'] = res['Contact Information']['full_name']
 
     # Summary or Objective
     res['Summary or Objective'] = [request.form['summary_or_objective']]
