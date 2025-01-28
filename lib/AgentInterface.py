@@ -86,6 +86,32 @@ Return only the json string with the specified keys and content. Use "Not provid
 Resume Text: 
 """
 
+jd_prompt = """
+"Given the following job description, extract the relevant sections and organize them into a valid json string format. The json should follow this specific structure:
+
+Job Title:
+company_name: The name of the company.
+position: The name of the position listed.
+Keywords:
+
+technical: A list of technical keywords, each containing:
+term: The technical keyword.
+required_years: The minimum required time for showcasing the skill.
+soft: A list of soft-skill keywords, each containing:
+term: the soft-skill keyword.
+required_years: The minimum required time for showcasing the skill.
+Actions:
+
+email_to: A recruiter/listed email to send your resume to.
+survey: A list of any additional link(s) to forms related to the application. 
+Statements:
+
+quantifiable: A list of metrics which align with the responsibilities of this position.
+ats: A condensed list of the responsibilities, as if one was currently working this role, to be listed in their resume.
+
+Job Description: 
+"""
+
 jd_instructions = [
     {
         "task": "Utilize this job description to produce values that will help get a candidate through an ATS, without including niche-industry-specifics.",
@@ -127,22 +153,20 @@ class PromptManager:
 
         
     def assess_jd(self, resume_text, job_description) -> dict:
-        jd_instructions.append(
-            {
-                "resume_text": resume_text,
-                "job_description": job_description
-            }
-        )
+        job_description = self.cleaner.no_quote(job_description)
+        instruct = jd_prompt + job_description
 
         completion = self.OpenAIclient.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": f"Execute these instructions: {str(jd_instructions)}" },
+                {"role": "system", "content": f"Execute these instructions: {str(instruct)}" },
             ]
         )
 
         response = completion.choices[0].message.content 
-        response = response.strip("```python").strip("```").replace("'", '"')
+        response = self.cleaner.ensure_gpt_format(response)
+        print(response)
+        
         return json.loads(response)
 
     

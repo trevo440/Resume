@@ -68,7 +68,7 @@ def process_data():
 def home():
     return render_template(
         'home.html',
-        cur=session.get('gpt_response', ''),
+        cur=session.get('gpt_response', False),
         job_desc=session.get('job_desc', ''),
         res=session.get('resume_sections', '')
     )
@@ -225,8 +225,6 @@ def download_pdf(resume_version='basic'):
     response = make_response(pdf_content)
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = f'attachment; filename="{name}-{job_title}.pdf"'
-
-    # Return the response
     return response
 
 def update_pdf_metadata(pdf_path, metadata):

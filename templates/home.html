@@ -51,36 +51,63 @@
             <div class="cur-content">
                 {% if cur %}
                     <div class="cur-item">
-                        <span class="cur-key">Keywords:</span>
-                        <ul class="cur-value">
-                            {% for keyword in cur.keywords %}
-                                <li>{{ keyword }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    <div class="cur-item">
                         <span class="cur-key">Job Title:</span>
-                        <span class="cur-value">{{ cur.job_title }}</span>
+                        <div class="cur-value">
+                            <p>Company Name: {{ cur['Job Title'].company_name }}</p>
+                            <p>Position: {{ cur['Job Title'].position }}</p>
+                        </div>
                     </div>
                     <div class="cur-item">
-                        <span class="cur-key">Job Tasks:</span>
+                        <span class="cur-key">Keywords:</span>
                         <div class="cur-value">
-                            {% for role, tasks in cur.job_task.items() %}
-                                <div class="cur-subitem">
-                                    <span class="cur-subkey">{{ role | capitalize }}:</span>
-                                    <ul>
-                                        {% for task in tasks %}
-                                            <li>{{ task }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            {% endfor %}
+                            <p>Technical:</p>
+                            <ul>
+                                {% for tech in cur['Keywords'].technical %}
+                                    <li>{{ tech.term }} ({{ tech.required_years }} years)</li>
+                                {% endfor %}
+                            </ul>
+                            <p>Soft Skills:</p>
+                            <ul>
+                                {% for soft in cur['Keywords'].soft %}
+                                    <li>{{ soft.term }} ({{ soft.required_years }} years)</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="cur-item">
+                        <span class="cur-key">Actions:</span>
+                        <div class="cur-value">
+                            <p>Email To: {{ cur['Actions'].email_to }}</p>
+                            <p>Survey Links:</p>
+                            <ul>
+                                {% for link in cur['Actions'].survey %}
+                                    <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="cur-item">
+                        <span class="cur-key">Statements:</span>
+                        <div class="cur-value">
+                            <p>Quantifiable Metrics:</p>
+                            <ul>
+                                {% for metric in cur['Statements'].quantifiable %}
+                                    <li>{{ metric }}</li>
+                                {% endfor %}
+                            </ul>
+                            <p>ATS Responsibilities:</p>
+                            <ul>
+                                {% for task in cur['Statements'].ats %}
+                                    <li>{{ task }}</li>
+                                {% endfor %}
+                            </ul>
                         </div>
                     </div>
                 {% else %}
                     <p>No processed data available.</p>
                 {% endif %}
             </div>
+
         </section>
     </div>    
 </div>
