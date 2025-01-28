@@ -11,7 +11,7 @@ from lib.data_cleaners import Cleanser
 # PROMPT(S)
 # ------------------------------------------------------------
 resume_prompt = """
-"Given the following resume text, extract the relevant sections and organize them into a valid json string format. The dictionary should follow this specific structure:
+"Given the following resume text, extract the relevant sections and organize them into a valid json string format. The json should follow this specific structure:
 
 Contact Information:
 
@@ -121,7 +121,6 @@ class PromptManager:
         )
         response = completion.choices[0].message.content 
         response = self.cleaner.ensure_gpt_format(response)
-        print(response)
         data = demjson3.decode(response, strict=False)
 
         return data
