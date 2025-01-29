@@ -18,6 +18,11 @@ import tempfile
 from datetime import datetime
 import uuid
 
+# ---------------------------
+# internal
+# ---------------------------
+from lib.EXAMPLE import example
+
 app = Flask(__name__)
 
 # ---------------------------
@@ -41,6 +46,7 @@ app.secret_key = 'your_secret_key'
 @app.before_request
 def check_session_data():
     # check local session & persisted data
+    # TODO: use this to update session[resume_sections] <- set as gate
     values_provided = request.cookies.get('requested_values_set')
     if not values_provided and request.endpoint not in [
         'static', 
@@ -179,8 +185,7 @@ TODO: maybe find some way to cache if nginx doesn't??
 """
 @app.route('/examples/<string:version>')
 def view_example(version):
-    """TODO: UPDATE TO NOT USE SESSION BUT STATIC EXAMPLE"""
-    res = session.get('resume_sections', '')
+    res = example
     contact_information = res['Contact Information']
     summary_or_objective = res['Summary or Objective']
     skills = res['Skills']
