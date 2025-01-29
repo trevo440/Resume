@@ -21,6 +21,11 @@
         {% block content %}{% endblock %}
     </main>
 </body>
+
+<script type="module" src="{{ url_for('static', filename='js/Cleanser.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/AgentInterface.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/PersistData.js') }}"></script>
+
 <script>
     function cleanInput(input) {
         // Remove non-UTF-8 characters and control characters
@@ -28,17 +33,10 @@
     }
 
     function startProcess(event) {
-        // Prevent form from submitting
         event.preventDefault();
-        
-        // Show loading spinner
         document.getElementById("loading").style.display = "block";
-        
-        // Get the updated job description value
+
         const jobDesc = document.getElementById("job-desc").value;
-
-        // First, send the updated job description to the Flask server
-
         const cleanedJobDesc = cleanInput(jobDesc);
         const body = JSON.stringify({ job_desc: cleanedJobDesc });
         
@@ -67,15 +65,12 @@
         });
     }
 
-    let selectedVersion = 'basic'; // Default value
-
-    // Function to handle changes in the resume version select dropdown
+    let selectedVersion = 'basic';
     function setSelectedVersion() {
         selectedVersion = document.getElementById('resume-version').value;
-        
-        // Update the view example link based on the selected resume version
         const exampleLink = document.getElementById('view-example-link');
         exampleLink.href = `/examples/${selectedVersion}`;
     }
 </script>
+{% block script %}{% endblock %}
 </html>

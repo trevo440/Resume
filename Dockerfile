@@ -14,8 +14,15 @@ RUN apt-get update && \
     libffi-dev \
     libxml2-dev \
     libxslt-dev \
-    && rm -rf /var/lib/apt/lists/*
+    curl && \
+    # Install Node.js and npm
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    # Clean up to reduce image size
+    rm -rf /var/lib/apt/lists/*
 
+# Install OpenAI client using npm
+RUN npm install openai --save
 
 # Copy the requirements.txt first to leverage Docker's caching mechanism
 COPY requirements.txt .

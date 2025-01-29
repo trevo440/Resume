@@ -5,7 +5,7 @@
         <h2 class="page-title">Set Your Information</h2>
 
         <!-- Form Container -->
-        <form method="POST">
+        <form id="user-base-info" method="POST">
             <!-- API Key Field (Private) -->
             <div class="form-group">
                 <label for="api_key" class="form-label">Enter API Key:</label>
@@ -25,4 +25,21 @@
             </div>
         </form>
     </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Attempt to set form values from localStorage
+        const apiKey = localStorage.getItem("api_key");
+        const resumeText = localStorage.getItem("resume_text");
+
+        if (apiKey) {
+            document.getElementById("api_key").value = apiKey;
+        }
+        if (resumeText) {
+            document.getElementById("resume_text").value = resumeText;
+        }
+    });
+</script>
 {% endblock %}
