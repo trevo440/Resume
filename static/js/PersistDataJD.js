@@ -1,4 +1,5 @@
 import { PromptManager } from './AgentInterface.js';
+import { apiRequest } from "./Handshake.js";
 
 let bodyJD = {}; 
 let newRM = {};
@@ -26,72 +27,51 @@ document.getElementById("update-job-form").addEventListener("submit", async func
 
     await getDataJD(PM, jobDesc);
 
-    fetch("/set_job_description", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(bodyJD)  // Ensure body is properly formatted as JSON
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Store values in localStorage
-        document.getElementById("loading").style.display = "none";
-        step2 = true;
-
-    })
-    .catch(error => {
-        document.getElementById("loading").style.display = "none";
-        step2 = false;
-        console.error("Error:", error);
-    }); 
-
-    if (step2) {
-        fetch("/get_resume_sections", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            },
-        })
-        .then(response => {
-            server_resume = response.json()
-        })
-        .catch(error => {
-            document.getElementById("loading").style.display = "none";
-        });
-
-        fetch("/get_job_description", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            },
-        })
-        .then(response => {
-            server_jd = response.json()
-        })
-        .catch(error => {
-            document.getElementById("loading").style.display = "none";
-        });
-
-        await intersectDataJD(PM, server_resume, server_jd);
-
-        fetch("/set_resume_sections", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(newRM)  // Ensure body is properly formatted as JSON
-        })
+    // Example API call
+    apiRequest("/set_job_description", "POST", JSON.stringify(bodyJD))
         .then(response => response.json())
         .then(data => {
             // Store values in localStorage
             document.getElementById("loading").style.display = "none";
-            location.reload();
-    
+            step2 = true;
+
         })
         .catch(error => {
             document.getElementById("loading").style.display = "none";
-        });
+            step2 = false;
+            console.error("Error:", error);
+        }); 
+
+    if (step2) {
+        apiRequest("/get_resume_sections", "GET")
+            .then(response => {
+                server_resume = response.json()
+            })
+            .catch(error => {
+                document.getElementById("loading").style.display = "none";
+            });
+
+        apiRequest("/get_job_description", "GET")
+            .then(response => {
+                server_jd = response.json()
+            })
+            .catch(error => {
+                document.getElementById("loading").style.display = "none";
+            });
+
+        await intersectDataJD(PM, server_resume, server_jd);
+
+        apiRequest("/set_resume_sections", "POST", JSON.stringify(newRM))
+            .then(response => response.json())
+            .then(data => {
+                // Store values in localStorage
+                document.getElementById("loading").style.display = "none";
+                location.reload();
+        
+            })
+            .catch(error => {
+                document.getElementById("loading").style.display = "none";
+            });
     }
 
 });

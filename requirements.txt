@@ -5,3 +5,4 @@ redis
 weasyprint
 pikepdf
 demjson3
+bleach

@@ -1,7 +1,7 @@
 # ---------------------------
 # flask
 # ---------------------------
-from flask import Flask, render_template, make_response, redirect, request, session, url_for
+from flask import Flask, render_template, make_response, redirect, request, session, url_for, jsonify
 from flask_session import Session
 
 # ---------------------------
@@ -17,6 +17,8 @@ import tempfile
 # ---------------------------
 from datetime import datetime
 import uuid
+from functools import wraps
+import os
 
 # ---------------------------
 # internal
@@ -44,10 +46,33 @@ app.secret_key = 'your_secret_key'
 # ---------------------------
 # MIDDLEWARE
 # ---------------------------
+def handshake_required(func):
+    """Decorator to enforce UUID & CSRF token validation on API requests."""
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        client_uuid = request.headers.get("X-Client-UUID")
+        csrf_token = request.headers.get("X-CSRF-Token")
+
+        # Validate UUID and CSRF token
+        if client_uuid != session.get("client_uuid"):
+            return jsonify({"status": "error", "message": "Invalid UUID"}), 403
+        if csrf_token != session.get("csrf_token"):
+            return jsonify({"status": "error", "message": "CSRF token mismatch"}), 403
+
+        return func(*args, **kwargs)
+    
+    return decorated_function
+
 @app.before_request
 def check_session_data():
     # check local session & persisted data
     # TODO: use this to update session[resume_sections] <- set as gate
+    if "client_uuid" not in session:
+        session["client_uuid"] = str(uuid.uuid4())  # Store UUID in session
+
+    if "csrf_token" not in session:
+        session["csrf_token"] = os.urandom(32).hex()  # Generate CSRF token
+    
     values_provided = request.cookies.get('requested_values_set')
     if not values_provided and request.endpoint not in [
         'static', 
@@ -63,11 +88,12 @@ def check_session_data():
 # ---------------------------
 @app.route('/', methods=['GET'])
 def home():
-    
     return render_template(
         'home.html',
         res=session.get('resume_sections'),
-        cur=session.get('job_description')
+        cur=session.get('job_description'),
+        client_uuid=session["client_uuid"], 
+        csrf_token=session["csrf_token"],
     )
 
 # ---------------------------
@@ -77,6 +103,7 @@ def home():
 API: Data from LLM responses
 """
 @app.route('/set_job_description', methods=['POST'])
+@handshake_required
 def set_job_description():
     data = request.get_json()
     # add validation for server side data acceptance
@@ -84,10 +111,12 @@ def set_job_description():
     return {"message": "Job description updated"}, 200
 
 @app.route('/get_job_description', methods=['GET'])
+@handshake_required
 def get_job_description():
     return session.get('job_description')
 
 @app.route('/set_resume_sections', methods=['POST'])
+@handshake_required
 def set_resume_sections():
     data = request.get_json()
     data = ensure_rm_keys_exist(session.get('resume_sections'))
@@ -96,6 +125,7 @@ def set_resume_sections():
     return {"message": "Resume sections updated"}, 200
 
 @app.route('/get_resume_sections', methods=['GET'])
+@handshake_required
 def get_resume_sections():
     return session.get('resume_sections')
 
@@ -108,7 +138,11 @@ Form: Render a form that calls GPT responses
 """
 @app.route('/set-all-data', methods=['GET'])
 def set_all_data():
-    return render_template('set_all_data.html')
+    return render_template(
+        'set_all_data.html',
+        client_uuid=session["client_uuid"], 
+        csrf_token=session["csrf_token"],
+    )
 # ---------------------------
 # PDFs
 # ---------------------------
