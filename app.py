@@ -1,8 +1,35 @@
+"""
+GENERIC TODO:
+> Validate EVERYTHING on JS side
+> Update Web UI
+    > Create model-settings
+
+        > Create token-estimator (show users cost of request)
+        > Max tokens, model-selections, etc.
+        > Put links to all relevent keys up
+    
+    > Setup advertising for paid services
+        
+        > No-key required
+        > No rate limit
+        > Series of agents for industry-specific & resume writing capabilities
+        > Make sure to include branding, contact, etc.
+        > Put examples on landing page
+
+    > Add to each sections a "update details here" functionality from GPT
+    > Create 10+ resume templates (structure) w/ color themes (theory)
+
+> Create login + user management w/ Redis
+> setup stripe + dynamic rate limit & Resume Template adjustments w/ login
+"""
+
 # ---------------------------
 # flask
 # ---------------------------
 from flask import Flask, render_template, make_response, redirect, request, session, url_for, jsonify
 from flask_session import Session
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 # ---------------------------
 # third party
@@ -24,7 +51,7 @@ import os
 # internal
 # ---------------------------
 from lib.EXAMPLE import example
-from lib.validators import ensure_rm_keys_exist
+from lib.validators import default_and_cleanse_rm, default_and_clean_jd
 
 app = Flask(__name__)
 
@@ -36,6 +63,34 @@ app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_KEY_PREFIX'] = 'yourapp:'
 app.config['SESSION_REDIS'] = redis.StrictRedis(host='redis', port=6379, db=0)
+app.config['RATELIMIT_STORAGE_URI'] = redis.StrictRedis(host='redis', port=6379, db=0)
+
+# ---------------------------
+# Configure Limiter for Free
+# ---------------------------
+limiter = Limiter(
+    app,
+    key_func=get_remote_address, 
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri=app.config['RATELIMIT_STORAGE_URI']
+)
+
+"""
+def dynamic_rate_limit():
+    # setup later for when we have paid users
+    user_id = session.get("user_id")  # Assuming user_id is stored in session
+    if not user_id:
+        return "5 per minute"  # Default limit for non-authenticated users
+    
+    try:
+        user = User.query.filter_by(id=user_id).one()
+        if user.account_type == "paid":
+            return "100 per minute"  # Higher limit for paid users
+        else:
+            return "5 per minute"  # Lower limit for free users
+    except NoResultFound:
+        return "5 per minute"  # Default limit if user not found
+"""
 
 # ---------------------------
 # INITALIZE
@@ -65,15 +120,17 @@ def handshake_required(func):
 
 @app.before_request
 def check_session_data():
-    # check local session & persisted data
-    # TODO: use this to update session[resume_sections] <- set as gate
+
     if "client_uuid" not in session:
-        session["client_uuid"] = str(uuid.uuid4())  # Store UUID in session
+        session["client_uuid"] = str(uuid.uuid4())
 
     if "csrf_token" not in session:
-        session["csrf_token"] = os.urandom(32).hex()  # Generate CSRF token
+        session["csrf_token"] = os.urandom(32).hex()
     
-    values_provided = request.cookies.get('requested_values_set')
+    if "resume_provided" not in session:
+        session["resume_provided"] = False
+
+    values_provided = session['resume_provided']
     if not values_provided and request.endpoint not in [
         'static', 
         'set_job_description', 
@@ -104,28 +161,34 @@ API: Data from LLM responses
 """
 @app.route('/set_job_description', methods=['POST'])
 @handshake_required
+@limiter.limit("5 per minute")
 def set_job_description():
     data = request.get_json()
-    # add validation for server side data acceptance
+    data = default_and_clean_jd(data)
+
     session['job_description'] = data
     return {"message": "Job description updated"}, 200
 
 @app.route('/get_job_description', methods=['GET'])
 @handshake_required
+@limiter.limit("5 per minute")
 def get_job_description():
     return session.get('job_description')
 
 @app.route('/set_resume_sections', methods=['POST'])
 @handshake_required
+@limiter.limit("5 per minute")
 def set_resume_sections():
     data = request.get_json()
-    data = ensure_rm_keys_exist(session.get('resume_sections'))
+    data = default_and_cleanse_rm(data)
     
     session['resume_sections'] = data
+    session['resume_provided'] = True
     return {"message": "Resume sections updated"}, 200
 
 @app.route('/get_resume_sections', methods=['GET'])
 @handshake_required
+@limiter.limit("5 per minute")
 def get_resume_sections():
     return session.get('resume_sections')
 
@@ -150,6 +213,7 @@ def set_all_data():
 PDF: Create the user's PDF from resume_sections
 """
 @app.route('/download_pdf')
+@limiter.limit("5 per hour")
 def download_pdf(resume_version='basic'):
     res = session.get('resume_sections', '')
     job = session.get('gpt_response')

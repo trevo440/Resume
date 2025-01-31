@@ -96,9 +96,45 @@ class DefaultsRM:
         "Publications": publications 
     }
 
-DefaultRM = DefaultsRM()
+class DefaultsJD:
+    job_title = {
+        "company_name": "Not provided",
+        "position": "Not provided",
+    }
 
-# SECTION CLEANERS
+    keywords = {
+        "technical": [{
+            "term": "Not provided",
+            "required_years": "Not provided"
+        }],
+        "soft": [{
+            "term": "Not provided",
+            "required_years": "Not provided"
+        }]
+    }
+
+    actions = {
+        "email_to": "Not provided",
+        "survey": ["Not provided"]
+    }
+
+    statements = {
+        "quanitfiable": ["Not provided"],
+        "ats": ["Not provided"]
+    }
+
+    full = {
+        "Job Title": job_title,
+        "Keywords": keywords,
+        "Actions": actions,
+        "Statements": statements
+    }
+
+# SET DEFAULTS
+DefaultRM = DefaultsRM()
+DefaultJD = DefaultsJD()
+
+# RESUME SECTION CLEANERS
 def clean_rm_contact(contact):
     clean_contact = {}
     for key in DefaultRM.contact.keys():
@@ -327,6 +363,71 @@ def clean_rm_publications(publications):
     
     return {"publications": clean_publications_list}
 
+def clean_jd_job_title(job_title):
+    clean_job_title = {}
+    for key in DefaultJD.job_title.keys():
+        val = job_title.get(key, None)
+        if val is not None:
+            clean_job_title[key] = bleach.clean(str(val))
+        else:
+            clean_job_title[key] = DefaultRM.contact[key]
+    return clean_job_title
+
+def clean_jd_keywords(keywords):
+    technical_clean = []
+    soft_clean = []
+    technical = keywords.get("technical", [{"term": "Not provided", "required_years": "Not provided"}])
+    if not isinstance(technical, list):
+        technical = [{"term": "Not provided", "required_years": "Not provided"}]
+
+    soft = keywords.get("soft", [{"term": "Not provided", "required_years": "Not provided"}])
+    if not isinstance(technical, list):
+        soft = [{"term": "Not provided", "required_years": "Not provided"}]
+    
+    for dictionary_tech in technical:
+        if not isinstance(dictionary_tech, dict):
+            continue
+        term = bleach.clean(str(dictionary_tech.get("term", "Not provided")))
+        required_years = bleach.clean(str(dictionary_tech.get("required_years", "Not provided")))
+        technical_clean.append({
+            "term": term,
+            "required_years": required_years
+        })
+
+    for dictionary_soft in soft:
+        if not isinstance(dictionary_soft, dict):
+            continue
+        term_soft = bleach.clean(str(dictionary_soft.get("term", "Not provided")))
+        required_years_soft = bleach.clean(str(dictionary_soft.get("required_years", "Not provided")))
+        soft_clean.append({
+            "term": term_soft,
+            "required_years": required_years_soft
+        })
+    
+    return {
+        "technical": technical_clean,
+        "soft": soft_clean
+    }
+
+
+def clean_jd_actions(actions):
+    email_to = bleach.clean(str(actions.get("email_to", "Not provided")))
+    survey = [bleach.clean(str(link)) for link in actions.get("survey", ["Not provided"])]    
+
+    return {
+        "email_to": email_to,
+        "survey": survey
+    }
+
+def clean_jd_statements(statements):
+    quantifiable = [bleach.clean(str(stmt)) for stmt in statements.get("quantifiable", ["Not provided"])]
+    ats = [bleach.clean(str(stmt)) for stmt in statements.get("ats", ["Not provided"])]
+
+    return {
+        "quantifiable": quantifiable,
+        "ats": ats
+    }
+
 # CLEAN ALL
 def default_and_cleanse_rm(res):
     if not isinstance(res, dict):
@@ -457,4 +558,53 @@ def default_and_cleanse_rm(res):
         "Publications": publications 
     } 
 
-    
+def default_and_clean_jd(cur):
+    if not isinstance(cur, dict):
+        return DefaultJD.full 
+   
+    # JOB TITLE
+    job_title = cur.get("Job Title", None)
+    if job_title is not None:
+        if not isinstance(job_title, dict):
+            job_title = DefaultJD.job_title
+        else:
+            job_title = clean_jd_job_title(job_title)              
+    else:
+        job_title = DefaultJD.job_title
+
+    # KEYWORDS
+    keywords = cur.get("Keywords", None)
+    if keywords is not None:
+        if not isinstance(keywords, dict):
+            keywords = DefaultJD.keywords
+        else:
+            keywords = clean_jd_keywords(keywords)              
+    else:
+        keywords = DefaultJD.keywords
+   
+    # ACTIONS
+    actions = cur.get("actions", None)
+    if actions is not None:
+        if not isinstance(actions, dict):
+            actions = DefaultJD.actions
+        else:
+            actions = clean_jd_actions(actions)              
+    else:
+        actions = DefaultJD.actions
+
+    # STATEMENTS
+    statements = cur.get("Statements", None)
+    if statements is not None:
+        if not isinstance(statements, dict):
+            statements = DefaultJD.statements
+        else:
+            statements = clean_jd_statements(statements)              
+    else:
+        statements = DefaultJD.statements
+   
+    return {
+        "Job Title": job_title,
+        "Keywords": keywords,
+        "Actions": actions,
+        "Statements": statements
+    }

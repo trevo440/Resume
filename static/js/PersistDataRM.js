@@ -21,13 +21,9 @@ document.getElementById("user-base-info").addEventListener("submit", async funct
     apiRequest("/set_resume_sections", "POST", JSON.stringify(body))
         .then(response => response.json())
         .then(data => {
-            // Store values in localStorage
             localStorage.setItem("api_key", apiKey);
             localStorage.setItem("resume_text", resumeText);
             localStorage.setItem("job_description_raw", '');
-            document.cookie = "requested_values_set=1; path=/; max-age=3600";
-            
-            alert(data.message);
             window.location.href = "/";
         })
         .catch(error => {

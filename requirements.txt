@@ -1,5 +1,6 @@
 flask
 flask-session
+flask-limiter
 openai
 redis
 weasyprint
