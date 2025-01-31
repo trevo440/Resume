@@ -15,7 +15,6 @@
     <section class="job-desc-section">
         <div class="section-header">
             <h3 class="section-title">Job Description</h3>
-            <button id="process-gpt-btn" class="btn primary-btn" type="button" onclick="startProcess(event)">Process with GPT</button>
             <div id="loading" class="loading" style="display:none;">
                 <div class="spinner"></div>
                 <p>Loading...</p>
@@ -23,6 +22,7 @@
         </div>
         <form id="update-job-form" method="POST" action="{{ url_for('home') }}" class="form">
             <textarea id="job-desc" name="job_desc" placeholder="Enter the job description here..." class="form-input job-desc-input">{{ session.get('job_desc', '') }}</textarea>
+            <button type="submit" class="btn-submit">Process with GPT</button>
         </form>
     </section>
 
@@ -229,4 +229,18 @@
        
 </div>
 
+{% endblock %}
+
+{% block script %}
+<script type="module" src="{{ url_for('static', filename='js/PersistDataJD.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        const jobDesc = localStorage.getItem("job_description_raw");
+        if (jobDesc) {
+            document.getElementById("job-desc").value = jobDesc;
+        }
+        
+    });
+</script>
 {% endblock %}

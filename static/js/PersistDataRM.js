@@ -14,14 +14,8 @@ document.getElementById("user-base-info").addEventListener("submit", async funct
     const apiKey = document.getElementById("api_key").value;
     const resumeText = document.getElementById("resume_text").value;
     const PM = new PromptManager(apiKey);
-
-    // Wait for getData to complete before proceeding
     await getData(PM, resumeText);
 
-    /* 
-        > Send updated resume sections to Redis Session
-        > We don't need to store this info but we could 
-    */
     fetch("/set_resume_sections", {
         method: "POST",
         headers: {

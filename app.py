@@ -22,6 +22,7 @@ import uuid
 # internal
 # ---------------------------
 from lib.EXAMPLE import example
+from lib.validators import ensure_rm_keys_exist
 
 app = Flask(__name__)
 
@@ -62,9 +63,11 @@ def check_session_data():
 # ---------------------------
 @app.route('/', methods=['GET'])
 def home():
+    
     return render_template(
         'home.html',
-        res=session.get('resume_sections')
+        res=session.get('resume_sections'),
+        cur=session.get('job_description')
     )
 
 # ---------------------------
@@ -75,18 +78,28 @@ API: Data from LLM responses
 """
 @app.route('/set_job_description', methods=['POST'])
 def set_job_description():
-    
     data = request.get_json()
     # add validation for server side data acceptance
     session['job_description'] = data
     return {"message": "Job description updated"}, 200
 
+@app.route('/get_job_description', methods=['GET'])
+def get_job_description():
+    return session.get('job_description')
+
 @app.route('/set_resume_sections', methods=['POST'])
 def set_resume_sections():
     data = request.get_json()
-    # add validation for server side data acceptance
+    data = ensure_rm_keys_exist(session.get('resume_sections'))
+    
     session['resume_sections'] = data
     return {"message": "Resume sections updated"}, 200
+
+@app.route('/get_resume_sections', methods=['GET'])
+def get_resume_sections():
+    return session.get('resume_sections')
+
+
 # ---------------------------
 # FormView
 # ---------------------------
@@ -96,7 +109,6 @@ Form: Render a form that calls GPT responses
 @app.route('/set-all-data', methods=['GET'])
 def set_all_data():
     return render_template('set_all_data.html')
-
 # ---------------------------
 # PDFs
 # ---------------------------

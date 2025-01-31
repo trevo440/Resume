@@ -28,6 +28,7 @@
 {% endblock %}
 
 {% block script %}
+<script type="module" src="{{ url_for('static', filename='js/PersistDataRM.js') }}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Attempt to set form values from localStorage

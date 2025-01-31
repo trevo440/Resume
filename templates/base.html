@@ -24,53 +24,6 @@
 
 <script type="module" src="{{ url_for('static', filename='js/Cleanser.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/AgentInterface.js') }}"></script>
-<script type="module" src="{{ url_for('static', filename='js/PersistData.js') }}"></script>
 
-<script>
-    function cleanInput(input) {
-        // Remove non-UTF-8 characters and control characters
-        return input.replace(/[^\u0000-\u007F]+/g, ''); // Keeps ASCII only (UTF-8 safe for JSON)
-    }
-
-    function startProcess(event) {
-        event.preventDefault();
-        document.getElementById("loading").style.display = "block";
-
-        const jobDesc = document.getElementById("job-desc").value;
-        const cleanedJobDesc = cleanInput(jobDesc);
-        const body = JSON.stringify({ job_desc: cleanedJobDesc });
-        
-        fetch("/update_job_desc", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: body
-        })
-        .then(response => response.json())
-        .then(data => {
-            // After updating the job description, make the AJAX request to process data
-            return fetch("/process_data");
-        })
-        .then(response => response.text())
-        .then(data => {
-            // Hide loading spinner after the process is complete
-            document.getElementById("loading").style.display = "none";
-            alert("Process Complete: " + data);
-            location.reload();
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            document.getElementById("loading").style.display = "none";
-        });
-    }
-
-    let selectedVersion = 'basic';
-    function setSelectedVersion() {
-        selectedVersion = document.getElementById('resume-version').value;
-        const exampleLink = document.getElementById('view-example-link');
-        exampleLink.href = `/examples/${selectedVersion}`;
-    }
-</script>
 {% block script %}{% endblock %}
 </html>

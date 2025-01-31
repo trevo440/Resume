@@ -104,8 +104,7 @@ Job Description:
 
 const intersectPrompt = `
 Given the following Resume JSON, and Job Requirements JSON:
-> IGNORE THE Actions of Requirements
-> DO NOT ALTER THE STRUCTURE OR KEYS OF THE Resume JSON
+> DO NOT ALTER THE STRUCTURE OR KEYS OF THE Resume JSON. Even if the values don't exist.
 > Intersect various work_experience responsibility statements with the following:
     > Job Requirements Quanifiable Metrics (use high-performance scores, and real numbers.)
     > Job Requirements Keywords (If required_years, attempt to place in a prior and current job)
@@ -200,6 +199,8 @@ export class PromptManager {
         const response = await this.fetchCompletion(data);
         let responseContent = response.choices[0].message.content;
         responseContent = this.cleaner.ensureGptFormat(responseContent);
+        console.log(responseContent)
+
         return JSON.parse(responseContent);
     }
 

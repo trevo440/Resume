@@ -1,4 +1,4 @@
-def ensure_keys_exist(res):
+def ensure_rm_keys_exist(res):
     default_structure = {
         "Contact Information": {
             "full_name": "",
