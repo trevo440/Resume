@@ -377,7 +377,6 @@ def clean_rm_publications(publications):
         }
         
         clean_publications_list.append(publication_clean)    
-    
     return {"publications": clean_publications_list}
 
 def clean_jd_job_title(job_title):
@@ -387,7 +386,7 @@ def clean_jd_job_title(job_title):
         if val is not None:
             clean_job_title[key] = bleach.clean(str(val))
         else:
-            clean_job_title[key] = DefaultRM.contact[key]
+            clean_job_title[key] = DefaultJD.job_title[key]
     return clean_job_title
 
 def clean_jd_keywords(keywords):

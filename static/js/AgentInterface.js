@@ -103,15 +103,26 @@ Job Description:
 `;
 
 const intersectPrompt = `
-Given the following Resume JSON, and Job Requirements JSON:
-> DO NOT ALTER THE STRUCTURE OR KEYS OF THE Resume JSON. Even if the values don't exist.
-> Intersect various work_experience responsibility statements with the following:
-    > Job Requirements Quanifiable Metrics (use high-performance scores, and real numbers.)
-    > Job Requirements Keywords (If required_years, attempt to place in a prior and current job)
-> Add some amount of Job Requirements ATS Responsibilities statements
-    > These can be in work_experience responsibility, summary, or projects.
+Given the following Resume JSON, and Job Requirements JSON, update content sections to evaluate higher in comparing the two:
 
-Return only the updated Resume JSON string with the specified keys and content. Use "Not provided" in place of any empty values.
+> ENSURE ALL CHARACTERS IN NEED OF ESCAPING ARE ESCAPED.
+> Add some amount of Job Requirements ATS Responsibilities statements
+
+The resulting JSON should follow this specific structure:
+
+summary: An UPDATED Summary that instersects both the quantifiable metrics (use high-performance scores, and real numbers.) and keywords.
+
+skills: A list of skills, including programming languages, tools, and other technical or soft skills. Any missing keywords should go in here.
+
+work_experience: An UPDATED list of job entries, FROM Resume JSON, INTERSECTED with Job Requirements JSON. You are NOT to make any new entries in this field, but MUST pull from existing.
+
+projects: A list of projects which partially match the Responsibilities of this role, each containing:
+project_title: The title of the project.
+description: A brief description of the project. Ensure it aligns with some Job Requirements JSON Statements.ats statement(s).
+technologies_used: A list of technologies used in the project. Use keywords here.
+
+Return ONLY the JSON string with the specified keys and content. Use "Not provided" in place of any empty values.
+
 `;
 import { Cleanser } from './Cleanser.js';
 /* Interface with OpenAI - update for model selection later */
@@ -193,8 +204,7 @@ export class PromptManager {
         const response = await this.fetchCompletion(data);
         let responseContent = response.choices[0].message.content;
         responseContent = this.cleaner.ensureGptFormat(responseContent);
-        console.log(responseContent)
-
+        console.log(responseContent);
         return JSON.parse(responseContent);
     }
 

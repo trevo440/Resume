@@ -151,7 +151,6 @@ def home():
         csrf_token=session["csrf_token"],
     )
 
-
 # ---------------------------
 # SET ALL DATA
 # ---------------------------
@@ -168,11 +167,12 @@ def set_job_description():
     session['job_description'] = data
     return {"message": "Job description updated"}, 200
 
+
 @app.route('/get_job_description', methods=['GET'])
 @handshake_required
-@limiter.limit("5 per minute")
+@limiter.limit("50 per minute")
 def get_job_description():
-    return session.get('job_description')
+    return jsonify(session.get('job_description'))
 
 @app.route('/set_resume_sections', methods=['POST'])
 @handshake_required
@@ -185,12 +185,36 @@ def set_resume_sections():
     session['resume_provided'] = True
     return {"message": "Resume sections updated"}, 200
 
-@app.route('/get_resume_sections', methods=['GET'])
+@app.route('/set_partial_resume_sections', methods=['POST'])
 @handshake_required
 @limiter.limit("5 per minute")
-def get_resume_sections():
-    return session.get('resume_sections')
+def set_partial_resume_sections():
+    data = request.get_json()
+    temp_resume = session['resume_sections']
 
+    if "summary" in data:
+        temp_resume["Summary or Objective"]["summary"] = data["summary"].split(".")
+    
+    if "projects" in data:
+        temp_resume["Projects"]["projects"] = data["projects"]
+    
+    if "skills" in data:
+        temp_resume["Skills"]["skills"] = data["skills"]
+
+    if "work_experience" in data:
+        temp_resume["Work Experience"]["work_experience"] = data["work_experience"]
+    
+    data = default_and_cleanse_rm(temp_resume)
+
+    session["resume_sections"] = data
+    session['resume_provided'] = True
+    return {"message": "Resume sections updated"}, 200
+
+@app.route('/get_resume_sections', methods=['GET'])
+@handshake_required
+@limiter.limit("50 per minute")
+def get_resume_sections():
+    return jsonify(session.get('resume_sections'))
 
 # ---------------------------
 # FormView

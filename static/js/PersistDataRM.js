@@ -21,11 +21,10 @@ document.getElementById("user-base-info").addEventListener("submit", async funct
 
     apiRequest("/set_resume_sections", "POST", body)
         .then(data => {
-
             localStorage.setItem("api_key", apiKey);
             localStorage.setItem("resume_text", resumeText);
             localStorage.setItem("job_description_raw", '');
-            // window.location.href = "/";
+            window.location.href = "/";
         })
         .catch(error => {
             console.error("Error:", error);
