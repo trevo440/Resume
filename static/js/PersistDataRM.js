@@ -16,6 +16,7 @@ document.getElementById("user-base-info").addEventListener("submit", async funct
     const resumeText = document.getElementById("resume_text").value;
     const PM = new PromptManager(apiKey);
     document.getElementById("resume-submit").style.display = "none";
+    document.getElementById("loading-dots").style.display = "flex";
     
     await getData(PM, resumeText);
 

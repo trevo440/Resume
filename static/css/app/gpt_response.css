@@ -9,6 +9,21 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
 }
 
+.gpt-response {
+    max-height: 340px;  /* Limits the height */
+    overflow-x: hidden; /* Hides horizontal scrolling */
+    padding: 10px;  /* Adds spacing inside */
+    border: 1px solid #ccc;  /* Optional: Adds a border */
+    border-radius: 8px;  /* Optional: Rounded corners */
+    overflow-y: scroll; /* Ensures scrolling works */
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer & Edge */
+}
+
+.gpt-response::-webkit-scrollbar {
+    display: none;  /* Hides scrollbar in Chrome, Safari, Edge */
+}
+
 /* Header and Content Styling */
 .cur-data h4 {
     font-size: 18px;

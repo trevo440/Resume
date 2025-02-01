@@ -13,6 +13,33 @@
     margin: 0 auto;
 }
 
+.dot-wrapper {
+    display: none;
+    gap: 10px;
+    position: relative;
+    width: 800px; /* Adjust width as needed */
+}
+
+.loading-dot {
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+    animation: moveDots 4s infinite ease-in-out;
+}
+
+/* Create delay effect for each dot */
+.loading-dot:nth-child(1) { animation-delay: 0s; }
+.loading-dot:nth-child(2) { animation-delay: 0.3s; }
+.loading-dot:nth-child(3) { animation-delay: 0.6s; }
+
+/* Keyframes for looping motion */
+@keyframes moveDots {
+    0% { transform: translateX(0); opacity: 0.5; }
+    50% { transform: translateX(30px); opacity: 1; }
+    100% { transform: translateX(60px); opacity: 0.5; }
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

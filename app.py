@@ -1,4 +1,5 @@
 """
+Current Status: Working-ish!!
 GENERIC TODO:
 > Validate EVERYTHING on JS side
 > Update Web UI
@@ -193,7 +194,7 @@ def set_partial_resume_sections():
     temp_resume = session['resume_sections']
 
     if "summary" in data:
-        temp_resume["Summary or Objective"]["summary"] = data["summary"].split(".")
+        temp_resume["Summary or Objective"]["summary"] = [x + "." for x in data["summary"].split(".")]
     
     if "projects" in data:
         temp_resume["Projects"]["projects"] = data["projects"]
@@ -239,7 +240,7 @@ PDF: Create the user's PDF from resume_sections
 @limiter.limit("5 per hour")
 def download_pdf(resume_version='basic'):
     res = session.get('resume_sections', '')
-    job = session.get('gpt_response')
+    job = session.get('job_description')
 
     contact_information = res['Contact Information']
     summary_or_objective = res['Summary or Objective']
@@ -289,7 +290,6 @@ def download_pdf(resume_version='basic'):
         '/UpdateDTM': current_datetime,
         '/CreateDTM': current_datetime,
         '/Language': 'English',
-        '/PageCount': 3,
         '/Version': '0.1',
         '/DocumentID': str(uuid.uuid4()),
     }
