@@ -1,36 +1,70 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="form-container">
+    <div class="">
         <h2 class="page-title">Set Your Information</h2>
-
-        <!-- Form Container -->
-        <form id="user-base-info" method="POST">
-            <!-- API Key Field (Private) -->
-            <div class="form-group">
-                <label for="api_key" class="form-label">Enter API Key:</label>
+    </div>
+    <!-- Form Container -->
+    <form id="user-base-info" class="container" method="POST">
+        <!-- API Key Field (Private) -->
+        <div class="form-group">
+            <div class="form-container">
+                <label for="model-version" class="form-label"><h4>Select Model:</h4></label>
+                <select id="model-version" name="model_version" class="form-control" onchange="">
+                    <!-- OPENAI -->
+                    <option value="openai:gpt-4o-mini">gpt-4o-mini</option>
+                    <option value="openai:gpt-4o">gpt-4o</option>
+                    <option value="openai:o1-mini">o1-mini</option>
+                    <option value="openai:o3-mini">o3-mini</option>
+                    <option value="openai:o1">o1</option>
+                </select>
+                <label for="api_key" class="form-label"><h5>Enter API Key:</h5></label>
                 <input type="password" id="api_key" name="api_key" class="form-control" required placeholder="Enter your API key here">
             </div>
-
-            <!-- Resume Text Field -->
-            <div class="form-group">
-                <label for="resume_text" class="form-label">Enter Resume Text:</label>
-                <textarea id="resume_text" name="resume_text" rows="5" class="form-control" required placeholder="Paste your resume text here"></textarea>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <th>Input</th>
+                        <th>Character(s)</th>
+                        <th>Est. Token(s)</th>
+                    </thead>
+                    <tr>
+                        <td>initial</td>
+                        <td id="initial-char-count">2855</td>
+                        <td id="initial-token-count">714</td>
+                    </tr>
+                    <tr>
+                        <td>resume</td>
+                        <td id="res-char-count">0</td>
+                        <td id="res-token-count">0</td>
+                    </tr>
+                    <tr>
+                        <td>total</td>
+                        <td id="total-char-count">0</td>
+                        <td id="total-token-count" style="text-align: right;">0</td>
+                    </tr>
+                </table>
             </div>
+        </div>
 
-            <!-- Submit Button -->
+        <!-- Resume Text Field -->
+        <div class="form-group form-container">
+            <label for="resume_text" class="form-label"><h4>Enter Resume Text:</h4></label>
+            <textarea id="resume_text" name="resume_text" rows="17" class="form-control" required placeholder="Paste your resume text here"></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        
+        <div id="loading-container" class="loading-container">
             <button id="resume-submit" type="submit" class="btn-submit">Submit</button>
-            <div id="loading-container" class="loading-container">
-                <p class="loading-text"><i>Processing your information may take a few minutes at this stage.</i></p>
-                <div class="dot-wrapper" id="loading-dots">
-                    <div class="loading-dot"></div>
-                    <div class="loading-dot"></div>
-                    <div class="loading-dot"></div>
-                </div>
-            </div>   
-
-        </form>
-    </div>
+            <p class="loading-text"><i>All API calls to models are performed on your machine. Processing your information may take a few minutes at this stage.</i></p>
+            <div class="dot-wrapper" id="loading-dots">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+            </div>
+        </div>   
+    </form>
 {% endblock %}
 
 {% block script %}
@@ -45,7 +79,28 @@
         }
         if (resumeText) {
             document.getElementById("resume_text").value = resumeText;
+            
+            document.getElementById("res-char-count").textContent = document.getElementById("resume_text").value.length;
+            document.getElementById("res-token-count").textContent = Math.round(document.getElementById("resume_text").value.length / 4);
+            document.getElementById("total-char-count").textContent = Number(
+                document.getElementById("res-char-count").textContent) + 
+                Number(document.getElementById("initial-char-count").textContent);
+            
+            document.getElementById("total-token-count").textContent = Number(
+                document.getElementById("res-token-count").textContent) + 
+                Number(document.getElementById("initial-token-count").textContent);
         }
+    });
+    document.getElementById("resume_text").addEventListener("input", function () {
+        document.getElementById("res-char-count").textContent = document.getElementById("resume_text").value.length;
+            document.getElementById("res-token-count").textContent = Math.round(document.getElementById("resume_text").value.length / 4);
+            document.getElementById("total-char-count").textContent = Number(
+                document.getElementById("res-char-count").textContent) + 
+                Number(document.getElementById("initial-char-count").textContent);
+            
+            document.getElementById("total-token-count").textContent = Number(
+                document.getElementById("res-token-count").textContent) + 
+                Number(document.getElementById("initial-token-count").textContent);
     });
 </script>
 {% endblock %}

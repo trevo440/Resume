@@ -48,6 +48,73 @@ body {
     margin-top: 20px;
 }
 
+/* Dark mode table container */
+.table-container {
+    width: 95%;
+    overflow-x: auto;
+    padding: 10px;
+    background-color: #49494936;
+    border-radius: 8px;
+    margin: 15px auto;
+}
+
+/* Dark mode table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #0c0c0c27;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Table header */
+thead {
+    background-color: #222;
+}
+
+th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: bold;
+    border-bottom: 2px solid #444;
+}
+
+/* Table body rows */
+td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #333;
+}
+
+/* Alternating row colors */
+tbody tr:nth-child(even) {
+    background-color: #292929;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #1e1e1e;
+}
+
+/* Hover effect */
+tbody tr:hover {
+    background-color: #383838;
+    transition: background 0.3s;
+}
+
+/* Optional: Add rounded corners to the first and last cell */
+th:first-child, td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+th:last-child, td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+
 
 /* Responsive Design */
 @media (max-width: 768px) {

@@ -1,6 +1,6 @@
 /* General Form Styling */
 .form-container {
-    max-width: 600px;
+    width:90%;
     margin: 0 auto; /* Center the form on the page */
     padding: 20px;
     background-color: #333; /* Dark background */
@@ -99,6 +99,17 @@ span {
     color: #817f7f; /* A neutral dark color */
     padding: 0.2rem 0; /* Adds a bit of spacing around the text */
     display: inline-block; /* Ensures consistent spacing if spans are on multiple lines */
+}
+
+#user-base-info{
+    display: grid; /* Enables CSS Grid */
+    grid-template-columns: 1fr, 3fr;
+    grid-template-rows: auto auto; /* Rows adjust automatically */
+    gap: 10px; /* Spacing between grid items */ 
+}
+
+#resume_text{
+    min-width: 100%;
 }
 
 

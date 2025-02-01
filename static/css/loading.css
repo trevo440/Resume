@@ -1,4 +1,7 @@
 /* Loading Spinner */
+.loading-container:nth-child(3) {
+    grid-column: span 2;
+}
 .loading {
     text-align: center;
 }

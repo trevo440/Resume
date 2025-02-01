@@ -5,8 +5,7 @@ GENERIC TODO:
 > Update Web UI
     > Create model-settings
 
-        > Create token-estimator (show users cost of request)
-        > Max tokens, model-selections, etc.
+        > (show users cost of request?)
         > Put links to all relevent keys up
     
     > Setup advertising for paid services
