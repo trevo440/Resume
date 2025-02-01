@@ -133,7 +133,6 @@ export class PromptManager {
     
         try {
             const response = await this.fetchCompletion(gpt_response);
-            
             if (!response || !response.choices || response.choices.length === 0) {
                 throw new Error("Invalid response from OpenAI API");
             }
@@ -143,16 +142,12 @@ export class PromptManager {
                 throw new Error("GPT response is empty");
             }
     
-            // Ensure proper JSON format
             responseContent = this.cleaner.ensureGptFormat(responseContent);
-    
-            console.log("GPT Response:", responseContent);
-    
-            // Try parsing the response safely
             return JSON.parse(responseContent);
+
         } catch (error) {
             console.error("Error in pullResume:", error);
-            return {}; // Return an empty object or handle the error appropriately
+            return {};
         }
     }
     
@@ -169,7 +164,6 @@ export class PromptManager {
         const response = await this.fetchCompletion(gpt_response);
         let responseContent = response.choices[0].message.content;
         responseContent = this.cleaner.ensureGptFormat(responseContent);
-        console.log(responseContent);
         return JSON.parse(responseContent);
     }
 

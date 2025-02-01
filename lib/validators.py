@@ -175,6 +175,8 @@ def clean_rm_work_experience(work_experience):
         work_experience_list = DefaultRM.work_experience["work_experience"]
     
     for work_history in work_experience_list:
+        if not isinstance(work_history, dict):
+            continue
         job_title = bleach.clean(str(work_history.get('job_title', 'Not provided')))
         company_name = bleach.clean(str(work_history.get('company_name', 'Not provided')))
         location = bleach.clean(str(work_history.get('location', 'Not provided')))
@@ -204,6 +206,8 @@ def clean_rm_education(education):
         education_list = DefaultRM.education["education"]
     
     for edu in education_list:
+        if not isinstance(edu, dict):
+            continue
         degree = bleach.clean(str(edu.get('degree', 'Not provided')))
         institution_name = bleach.clean(str(edu.get('institution_name', 'Not provided')))
         location = bleach.clean(str(edu.get('location', 'Not provided')))
@@ -228,6 +232,8 @@ def clean_rm_certifications(certifications):
         certifications_list = DefaultRM.certifications["certifications"]
     
     for cert in certifications_list:
+        if not isinstance(cert, dict):
+            continue
         certification_name = bleach.clean(str(cert.get('certification_name', 'Not provided')))
         issuing_organization = bleach.clean(str(cert.get('issuing_organization', 'Not provided')))
         date_issued = bleach.clean(str(cert.get('date_issued', 'Not provided')))
@@ -248,7 +254,10 @@ def clean_rm_projects(projects):
     if not isinstance(projects_list, list):
         projects_list = DefaultRM.projects["projects"]
     
-    for project in projects:
+    for project in projects_list:
+        if not isinstance(project, dict):
+            continue
+
         project_title = bleach.clean(str(project.get('project_title', 'Not provided')))
         description = bleach.clean(str(project.get('description', 'Not provided')))
         technologies_used = [
@@ -275,7 +284,9 @@ def clean_rm_awards(awards):
     if not isinstance(awards_list, list):
         awards_list = DefaultRM.awards["awards"]
     
-    for award in awards:
+    for award in awards_list:
+        if not isinstance(award, dict):
+            continue
         award_name = bleach.clean(str(award.get('award_name', 'Not provided')))
         issuing_organization = bleach.clean(str(award.get('issuing_organization', 'Not provided')))
         date_awarded = bleach.clean(str(award.get('date_awarded', 'Not provided')))
@@ -298,6 +309,8 @@ def clean_rm_volunteer_experience(volunteer_experience):
         volunteer_experience_list = DefaultRM.volunteer_experience["volunteer_experience"]
     
     for volunteer_history in volunteer_experience_list:
+        if not isinstance(volunteer_history, dict):
+            continue
         role_title = bleach.clean(str(volunteer_history.get('role_title', 'Not provided')))
         organization_name = bleach.clean(str(volunteer_history.get('organization_name', 'Not provided')))
         location = bleach.clean(str(volunteer_history.get('location', 'Not provided')))
@@ -326,7 +339,9 @@ def clean_rm_languages(languages):
     if not isinstance(languages_list, list):
         languages_list = DefaultRM.languages["languages"]
     
-    for language in languages:
+    for language in languages_list:
+        if not isinstance(language, dict):
+            continue
         language_name = bleach.clean(str(language.get('language_name', 'Not provided')))
         proficiency_level = bleach.clean(str(language.get('proficiency_level', 'Not provided')))
         
@@ -346,7 +361,9 @@ def clean_rm_publications(publications):
     if not isinstance(publications_list, list):
         publications_list = DefaultRM.publications["publications"]
     
-    for publication in publications:
+    for publication in publications_list:
+        if not isinstance(publication, dict):
+            continue
         publication_title = bleach.clean(str(publication.get('publication_title', 'Not provided')))
         publication_source = bleach.clean(str(publication.get('publication_source', 'Not provided')))
         date_published = bleach.clean(str(publication.get('date_published', 'Not provided')))

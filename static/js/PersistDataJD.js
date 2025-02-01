@@ -29,7 +29,6 @@ document.getElementById("update-job-form").addEventListener("submit", async func
 
     // Example API call
     apiRequest("/set_job_description", "POST", JSON.stringify(bodyJD))
-        .then(response => response.json())
         .then(data => {
             // Store values in localStorage
             document.getElementById("loading").style.display = "none";
@@ -45,7 +44,7 @@ document.getElementById("update-job-form").addEventListener("submit", async func
     if (step2) {
         apiRequest("/get_resume_sections", "GET")
             .then(response => {
-                server_resume = response.json()
+                server_resume = response
             })
             .catch(error => {
                 document.getElementById("loading").style.display = "none";
@@ -53,7 +52,7 @@ document.getElementById("update-job-form").addEventListener("submit", async func
 
         apiRequest("/get_job_description", "GET")
             .then(response => {
-                server_jd = response.json()
+                server_jd = response
             })
             .catch(error => {
                 document.getElementById("loading").style.display = "none";
@@ -62,7 +61,6 @@ document.getElementById("update-job-form").addEventListener("submit", async func
         await intersectDataJD(PM, server_resume, server_jd);
 
         apiRequest("/set_resume_sections", "POST", JSON.stringify(newRM))
-            .then(response => response.json())
             .then(data => {
                 // Store values in localStorage
                 document.getElementById("loading").style.display = "none";

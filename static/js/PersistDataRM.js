@@ -15,16 +15,17 @@ document.getElementById("user-base-info").addEventListener("submit", async funct
     const apiKey = document.getElementById("api_key").value;
     const resumeText = document.getElementById("resume_text").value;
     const PM = new PromptManager(apiKey);
+    document.getElementById("resume-submit").style.display = "none";
     
     await getData(PM, resumeText);
 
-    apiRequest("/set_resume_sections", "POST", JSON.stringify(body))
-        .then(response => response.json())
+    apiRequest("/set_resume_sections", "POST", body)
         .then(data => {
+
             localStorage.setItem("api_key", apiKey);
             localStorage.setItem("resume_text", resumeText);
             localStorage.setItem("job_description_raw", '');
-            window.location.href = "/";
+            // window.location.href = "/";
         })
         .catch(error => {
             console.error("Error:", error);

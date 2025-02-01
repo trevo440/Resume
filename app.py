@@ -69,12 +69,10 @@ app.config['RATELIMIT_STORAGE_URI'] = redis.StrictRedis(host='redis', port=6379,
 # Configure Limiter for Free
 # ---------------------------
 limiter = Limiter(
-    app,
     key_func=get_remote_address, 
     default_limits=["200 per day", "50 per hour"],
     storage_uri=app.config['RATELIMIT_STORAGE_URI']
 )
-
 """
 def dynamic_rate_limit():
     # setup later for when we have paid users
@@ -97,7 +95,7 @@ def dynamic_rate_limit():
 # ---------------------------
 Session(app)
 app.secret_key = 'your_secret_key'
-
+ 
 # ---------------------------
 # MIDDLEWARE
 # ---------------------------
@@ -108,7 +106,6 @@ def handshake_required(func):
         client_uuid = request.headers.get("X-Client-UUID")
         csrf_token = request.headers.get("X-CSRF-Token")
 
-        # Validate UUID and CSRF token
         if client_uuid != session.get("client_uuid"):
             return jsonify({"status": "error", "message": "Invalid UUID"}), 403
         if csrf_token != session.get("csrf_token"):
@@ -140,6 +137,7 @@ def check_session_data():
     ]:
         return redirect(url_for('set_all_data'))
 
+
 # ---------------------------
 # HOME
 # ---------------------------
@@ -152,6 +150,7 @@ def home():
         client_uuid=session["client_uuid"], 
         csrf_token=session["csrf_token"],
     )
+
 
 # ---------------------------
 # SET ALL DATA
@@ -181,7 +180,7 @@ def get_job_description():
 def set_resume_sections():
     data = request.get_json()
     data = default_and_cleanse_rm(data)
-    
+
     session['resume_sections'] = data
     session['resume_provided'] = True
     return {"message": "Resume sections updated"}, 200

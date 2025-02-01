@@ -19,7 +19,7 @@
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" class="btn-submit">Submit</button>
+            <button id="resume-submit" type="submit" class="btn-submit">Submit</button>
             <div id="loading-container" class="loading-container">
                 <p class="loading-text"><i>Processing your information may take a few minutes at this stage.</i></p>
             </div>
@@ -31,7 +31,6 @@
 <script type="module" src="{{ url_for('static', filename='js/PersistDataRM.js') }}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Attempt to set form values from localStorage
         const apiKey = localStorage.getItem("api_key");
         const resumeText = localStorage.getItem("resume_text");
 
