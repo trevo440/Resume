@@ -114,6 +114,40 @@ th:last-child, td:last-child {
     border-bottom-right-radius: 8px;
 }
 
+.dark-list {
+    list-style: none;
+    margin: 20px;
+    padding: 10px;
+    background: #1e1e1e;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    max-width: 400px;
+}
+
+.dark-list li {
+    padding: 12px 18px;
+    margin: 6px 0;
+    background: #2a2a2a;
+    color: #ffffff;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dark-list li:hover {
+    background: #333;
+    transform: scale(1.03);
+}
+
+.dark-list li::before {
+    content: "•";
+    color: #ffcc00;
+    font-size: 18px;
+}
 
 
 /* Responsive Design */

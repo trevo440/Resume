@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/loading.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app/job_description.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app/gpt_response.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app/resume_options.css') }}">
@@ -19,6 +20,19 @@
     </header>
     <main>
         {% block content %}{% endblock %}
+        <!-- If NOT user = premium ELSE account management -->
+        <div class="card-premium" id="card-premium">
+            <div class="close-btn" id="closeBtn">&times;</div>
+            <div class="card-premium-content">
+                <h1 style="color:aqua;">Premium </h1>
+                <ul class="dark-list">
+                    <li>Unlimited Resume Downloads</li>
+                    <li>Access All Resume Styles</li>
+                    <li>No API Key Required</li>
+                    <li>Try out Industry-Focused Agents to improve your resume further</li>
+                </ul>
+            </div>
+        </div>
     </main>
 </body>
 
@@ -29,6 +43,18 @@ window.appConfig = {
     clientUUID: "{{ client_uuid }}",
     csrfToken: "{{ csrf_token }}"
 };
+
+const cardPremium = document.getElementById("card-premium");
+const closeBtn = document.getElementById("closeBtn");
+
+cardPremium.addEventListener("click", () => {
+    cardPremium.classList.add("fullscreen");
+});
+
+closeBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    cardPremium.classList.remove("fullscreen");
+});
 </script>
 <script type="module" src="{{ url_for('static', filename='js/Handshake.js') }}"></script>
 

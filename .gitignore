@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+pswd.txt
 
 # C extensions
 *.so

@@ -1,6 +1,7 @@
 flask
 flask-session
 flask-limiter
+sendgrid
 openai
 redis
 weasyprint

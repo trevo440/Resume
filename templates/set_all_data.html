@@ -2,11 +2,9 @@
 
 {% block content %}
     <div class="">
-        <h2 class="page-title">Set Your Information</h2>
+        <h2 class="page-title">KWIP.TECH</h2>
     </div>
-    <!-- Form Container -->
     <form id="user-base-info" class="container" method="POST">
-        <!-- API Key Field (Private) -->
         <div class="form-group">
             <div class="form-container">
                 <label for="model-version" class="form-label"><h4>Select Model:</h4></label>
@@ -18,7 +16,7 @@
                     <option value="openai:o3-mini">o3-mini</option>
                     <option value="openai:o1">o1</option>
                 </select>
-                <label for="api_key" class="form-label"><h5>Enter API Key:</h5></label>
+                <label for="api_key" class="form-label"><h5>Enter <a id="api_url" style="color:white;" href="https://platform.openai.com/api-keys">API Key:</a></h5></label>
                 <input type="password" id="api_key" name="api_key" class="form-control" required placeholder="Enter your API key here">
             </div>
             <div class="table-container">
@@ -57,7 +55,7 @@
         
         <div id="loading-container" class="loading-container">
             <button id="resume-submit" type="submit" class="btn-submit">Submit</button>
-            <p class="loading-text"><i>All API calls to models are performed on your machine. Processing your information may take a few minutes at this stage.</i></p>
+            <p class="loading-text"><i>All API calls to models are performed on your machine. Processing your information may take a few minutes at this stage.</i> <a href="examples/basic" id="view-example-link" style="color:white;margin-top: 14px;" target="_blank"><i>Basic Resume</i></a></p>
             <div class="dot-wrapper" id="loading-dots">
                 <div class="loading-dot"></div>
                 <div class="loading-dot"></div>
@@ -73,6 +71,24 @@
     document.addEventListener("DOMContentLoaded", function() {
         const apiKey = localStorage.getItem("api_key");
         const resumeText = localStorage.getItem("resume_text");
+        const modelVersion = document.getElementById("model-version");
+        const apiURL = document.getElementById("api_url");
+
+        // Load stored value on page load
+        const modelValue = localStorage.getItem("model_version");
+        if (modelValue) {
+            modelVersion.value = modelValue;
+            if (modelValue.includes("openai:")) {
+                apiURL.link = "https://platform.openai.com/api-keys";
+            }
+        }
+
+        modelVersion.addEventListener("change", function () {
+            localStorage.setItem("model_version", modelVersion.value);
+            if (modelVersion.value.includes("openai:")) {
+                apiURL.link = "https://platform.openai.com/api-keys";
+            }
+        });
 
         if (apiKey) {
             document.getElementById("api_key").value = apiKey;

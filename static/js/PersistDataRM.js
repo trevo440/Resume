@@ -25,9 +25,13 @@ document.getElementById("user-base-info").addEventListener("submit", async funct
             localStorage.setItem("api_key", apiKey);
             localStorage.setItem("resume_text", resumeText);
             localStorage.setItem("job_description_raw", '');
+            document.getElementById("resume-submit").style.display = "block";
+            document.getElementById("loading-dots").style.display = "none";
             window.location.href = "/";
         })
         .catch(error => {
+            document.getElementById("resume-submit").style.display = "block";
+            document.getElementById("loading-dots").style.display = "none";
             console.error("Error:", error);
         });    
 });

@@ -1,26 +1,21 @@
 """
-Current Status: Working-ish!!
 GENERIC TODO:
-> Validate EVERYTHING on JS side
-> Update Web UI
-    > Create model-settings
+> Validate EVERYTHING on JS side -| 25%
+    > test connection ??
+    > resume submit / update (full)
+        > on error allow user to fix JSON maybe??
+    > resume update (partial)
+    > job description extraction
 
-        > (show users cost of request?)
-        > Put links to all relevent keys up
-    
-    > Setup advertising for paid services
-        
-        > No-key required
-        > No rate limit
-        > Series of agents for industry-specific & resume writing capabilities
-        > Make sure to include branding, contact, etc.
-        > Put examples on landing page
-
+> Update Web UI -| 20%
+    > Make sure to include branding, contact, etc.
+    > completely fix UI (resume updater) components
     > Add to each sections a "update details here" functionality from GPT
     > Create 10+ resume templates (structure) w/ color themes (theory)
 
-> Create login + user management w/ Redis
-> setup stripe + dynamic rate limit & Resume Template adjustments w/ login
+> Create login + user management w/ Redis -| 50%
+> setup stripe + dynamic rate limit & Resume Template adjustments w/ login -| 0%
+> update all CSS to be device-friendly -| 0%
 """
 
 # ---------------------------
@@ -39,10 +34,14 @@ import redis
 import pikepdf
 import tempfile
 
+# MAIL SERVER
+import sendgrid
+from sendgrid.helpers.mail import Mail, Email, To, Personalization
+
 # ---------------------------
 # standard library
 # ---------------------------
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import uuid
 from functools import wraps
 import os
@@ -58,13 +57,22 @@ app = Flask(__name__)
 # ---------------------------
 # Configure Redis for Session
 # ---------------------------
-app.config['SESSION_TYPE'] = 'redis'
-app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_KEY_PREFIX'] = 'yourapp:'
-app.config['SESSION_REDIS'] = redis.StrictRedis(host='redis', port=6379, db=0)
-app.config['RATELIMIT_STORAGE_URI'] = redis.StrictRedis(host='redis', port=6379, db=0)
 
+redis_sessions_anon = redis.StrictRedis(host="redis", port=6379, db=0, decode_responses=True)
+redis_sessions_auth = redis.StrictRedis(host="redis", port=6379, db=1, decode_responses=True)
+redis_sessions_rate = redis.StrictRedis(host="redis", port=6379, db=2, decode_responses=True)
+
+
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_PERMANENT'] = True 
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_KEY_PREFIX'] = 'kwip:'
+app.config['SESSION_REDIS'] = redis_sessions_anon
+app.config['RATELIMIT_STORAGE_URI'] = redis_sessions_rate
+with open("./pswd.txt", "r") as f:
+    sendgrid_key = f.read()
+
+auth_sessions = {}
 # ---------------------------
 # Configure Limiter for Free
 # ---------------------------
@@ -117,6 +125,8 @@ def handshake_required(func):
 
 @app.before_request
 def check_session_data():
+    if "user_auth" not in session:
+        session["user_auth"] = False
 
     if "client_uuid" not in session:
         session["client_uuid"] = str(uuid.uuid4())
@@ -124,18 +134,24 @@ def check_session_data():
     if "csrf_token" not in session:
         session["csrf_token"] = os.urandom(32).hex()
     
-    if "resume_provided" not in session:
-        session["resume_provided"] = False
+    # need to do this with all values
+    if not session["user_auth"]:
+        if "resume_provided" not in session:
+            session["resume_provided"] = False
+    
+    if session["user_auth"]:
+        if not redis_sessions_auth.hget(session["user_key"], "resume_provided"):
+            redis_sessions_auth.hset(session["user_key"], "resume_provided", False)
 
     values_provided = session['resume_provided']
     if not values_provided and request.endpoint not in [
         'static', 
         'set_job_description', 
         'set_resume_sections',
-        'set_all_data',
+        'get-started',
         'download_pdf'
     ]:
-        return redirect(url_for('set_all_data'))
+        return redirect(url_for('get-started'))
 
 
 # ---------------------------
@@ -222,7 +238,7 @@ def get_resume_sections():
 """
 Form: Render a form that calls GPT responses
 """
-@app.route('/set-all-data', methods=['GET'])
+@app.route('/get-started', methods=['GET'])
 def set_all_data():
     return render_template(
         'set_all_data.html',
@@ -344,6 +360,70 @@ def view_example(version):
         languages = languages,
         publications = publications
     )
+
+# ---------------------------
+# MAIL - SENDGRID -
+# ---------------------------
+
+def send_security_code_email(recipient_email):
+    try:
+        sg = sendgrid.SendGridAPIClient(api_key=sendgrid_key)
+        security_code = str(uuid.uuid4())[:6]
+        session["auth_code"] = security_code
+        session["auth_expiry"] = (datetime.now(timezone.utc) + timedelta(minutes=10)).timestamp()
+
+        # Create Mail object with template
+        mail = Mail(from_email=Email("sender@kwip.info"))
+        mail.template_id = "d-c7258ed1e04e4ddf841581dd12d5b269"
+
+        personalization = Personalization()
+        personalization.add_to(To(recipient_email))
+        personalization.dynamic_template_data = {
+            "CODE": security_code
+        }
+        mail.add_personalization(personalization)
+        response = sg.send(mail)
+
+        return response.status_code
+
+    except Exception:
+        return None
+
+# Effectively, allow user to sign in
+@app.route('/send_validation_email', methods=['POST'])
+@handshake_required
+def send_verification_email():
+    data = request.get_json()
+    
+    # set some user password here later too
+    # also ensure session sets localStorage email
+    
+    response = send_security_code_email(data["user_email"])
+    if response is not None:
+        return "", 204
+    return "", 400
+
+@app.route('/validate_email_code', methods=['POST'])
+@handshake_required
+def validate_verification_email():
+    auth_expiry = session.get("auth_expiry")
+    if auth_expiry and (datetime.now(timezone.utc)).timestamp() > auth_expiry:
+        session.pop("auth_code", None)
+        session.pop("auth_expiry", None)
+    
+    data = request.get_json()
+    if session.get("auth_code") == data["auth_code"]:
+        session.clear()
+        
+        email = data["user_email"]
+        session["user_key"] = f"email:{email}"
+        # theoretically add password check here maybe
+        session["user_auth"] = True
+        if not redis_sessions_auth.hget(session["user_key"], "role"):
+            redis_sessions_auth.hset(session["user_key"], "role", "basic")
+        return "", 204
+    return "", 403
+
 
 # ---------------------------
 # LOGOUT

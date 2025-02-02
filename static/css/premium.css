@@ -1,0 +1,81 @@
+.card-premium {
+    position: fixed;
+    right: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15%;
+    height: 100%;
+    background: #1e1e1e; /* Dark background */
+    color: #ffffff; /* White text */
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); /* Stronger shadow */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+}
+
+.card-premium:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); /* Stronger hover effect */
+    transform: translateY(-50%) scale(1.05); /* Slightly scale on hover */
+}
+
+.card-premium.fullscreen {
+    position: fixed;
+    right: 10vw;
+    top: 10vh;
+    width: 80vw;
+    height: 80vh;
+    transform: none;
+    z-index: 9999;
+    border-radius: 0;
+    box-shadow: none;
+    background: #121212; /* Even darker fullscreen mode */
+}
+
+.card-premium-content {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.card-premium.fullscreen .card-premium-content {
+    display: none;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    color: #bbb;
+    cursor: pointer;
+    display: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.stripe{
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    color: #bbb;
+    cursor: pointer;
+    display: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.card-premium.card-premium.fullscreen .stripe {
+    display: block
+}
+
+.card-premium.fullscreen .close-btn {
+    display: block;
+}
+
+.close-btn:hover {
+    color: #ffffff;
+}

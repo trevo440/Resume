@@ -130,7 +130,18 @@ export class PromptManager {
     constructor(apiKey) {
         this.apiKey = apiKey;
         this.cleaner = new Cleanser();
-        this.endpoint = 'https://api.openai.com/v1/chat/completions';
+        
+        // effective enough default
+        const modelString = localStorage.getItem("model_version");
+        const [provider, model] = modelString.includes(":") ? modelString.split(":") : ["openai","gpt-4o-mini"];
+        
+        this.provider = provider;
+        this.model = model;
+        if (this.provider === "openai") {
+            this.endpoint = 'https://api.openai.com/v1/chat/completions';
+        } else { 
+            this.endpoint = ''
+        }
     }
 
     async pullResume(resumeText) {
@@ -138,7 +149,7 @@ export class PromptManager {
         const instruct = `${resumePrompt}${resumeText}\n\n{\n    \"task\": \"GPT Response to be usable in programming loop\",\n    \"details\": \"Return a valid JSON string in the correct format only and NOTHING ELSE. Include ALL keys, even if they are empty.\" \n},`;
     
         const gpt_response = {
-            model: "gpt-4o-mini",
+            model: this.model,
             messages: [{ role: "system", content: instruct }]
         };
     
@@ -168,7 +179,7 @@ export class PromptManager {
         const instruct = `${resumePrompt}${resumeText}\n\n{\n    \"task\": \"GPT Response to be usable in programming loop\",\n    \"details\": \"Return a valid JSON string in the correct format only and NOTHING ELSE. Include ALL keys, even if they are empty.\" \n},`;
 
         const gpt_response = {
-            model: "gpt-4o-mini",
+            model: this.model,
             messages: [{ role: "system", content: instruct }]
         };
 
@@ -183,7 +194,7 @@ export class PromptManager {
         const instruct = `${jdPrompt}${jobDescription}`;
 
         const data = {
-            model: "gpt-4o-mini",
+            model: this.model,
             messages: [{ role: "system", content: `Execute these instructions: ${instruct}` }]
         };
 
@@ -197,7 +208,7 @@ export class PromptManager {
         const instruct = `${intersectPrompt}Resume JSON: ${JSON.stringify(resumeSections)}\nJob Requirements JSON: ${JSON.stringify(jobDescription)}`;
 
         const data = {
-            model: "gpt-4o-mini",
+            model: this.model,
             messages: [{ role: "system", content: `Execute these instructions: ${instruct}` }]
         };
 
@@ -208,8 +219,9 @@ export class PromptManager {
         return JSON.parse(responseContent);
     }
 
-    // Helper function to handle the fetch request to the OpenAI API
     async fetchCompletion(data) {
+        /* any additional functionality for 
+           each vendor will go here */
         const response = await fetch(this.endpoint, {
             method: 'POST',
             headers: {
