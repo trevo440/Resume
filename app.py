@@ -1,6 +1,6 @@
 """
 GENERIC TODO:
-> Create login + user management w/ Redis -| 75%
+> Create login + user management w/ Redis -| 85%
 > Update Web UI -| 20%
     > Make sure to include branding, contact, etc.
     > completely fix UI (resume updater) components + include_section preferences
@@ -87,7 +87,7 @@ def dynamic_rate_limit():
             return "5 per minute"  # Lower limit for free users
     except NoResultFound:
         return "5 per minute"  # Default limit if user not found
-"""
+    """
 
 # ---------------------------
 # INITALIZE
@@ -144,7 +144,11 @@ def check_session_data():
         'set_job_description', 
         'set_resume_sections',
         'get_started',
-        'download_pdf'
+        'download_pdf',
+        'view_example',
+        'register_user',
+        'sign_user_in',
+        'validate_verification_email',
     ]:
         return redirect(url_for('get_started'))
 
@@ -379,7 +383,6 @@ def send_security_code_email(recipient_email):
         }
         mail.add_personalization(personalization)
         response = sg.send(mail)
-
         return response.status_code
 
     except Exception:
@@ -394,14 +397,20 @@ def validate_verification_email():
         session.pop("auth_code", None)
         session.pop("auth_expiry", None)
     
+
     data = request.get_json()
-    if session.get("auth_code") == data["auth_code"]:
+    if session.get("auth_code") == data["verify-code"]:
         """Need to set all user values // transfer from session"""
+        print("success")
+        email = session["no_auth_email"]
         session.clear()
         
-        email = data["user_email"]
+        
         session["user_key"] = f"email:{email}"
         session["user_auth"] = True
+
+        # add this to redis_sessions_auth
+        # session["no_auth_pswd_hash"]
 
         if not redis_sessions_auth.hget(session["user_key"], "role"):
             redis_sessions_auth.hset(session["user_key"], "role", "basic")
@@ -412,7 +421,7 @@ def validate_verification_email():
 # ---------------------------
 # USER
 # ---------------------------
-app.route("/sign_user_in", methods=['POST'])
+@app.route("/sign_user_in", methods=['POST'])
 @handshake_required
 @limiter.limit("5 per hour")
 def sign_user_in():
@@ -425,17 +434,18 @@ def sign_user_in():
         session["user_auth"] = True
         session["user_key"] = f"email:{email}"
 
-app.route("/register_user", methods=['POST'])
+
+@app.route("/register_user", methods=['POST'])
 @handshake_required
-@limiter.limit("5 per hour")
+@limiter.limit("50 per hour")
 def register_user():
     data = request.get_json()
     session["no_auth_email"] = data["email"]
     session["no_auth_pswd_hash"] = generate_password_hash(data["password"])
-    response = send_security_code_email(data["user_email"])
+    response = send_security_code_email(session["no_auth_email"])
     if response is not None:
-        return "", 204
-    return "", 400
+        return jsonify({"status": "success"}), 204
+    return jsonify({"status": "error"}), 400
 
 # ---------------------------
 # LOGOUT
