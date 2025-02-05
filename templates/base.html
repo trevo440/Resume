@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/loading.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app/job_description.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app/gpt_response.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app/resume_options.css') }}">
@@ -33,30 +34,132 @@
                 </ul>
             </div>
         </div>
+
+        <div class="card-login" id="card-login">
+            <div class="l-close-btn" id="l-closeBtn">&times;</div>
+            <div class="login-link"><h3> Login / Sign Up </h3></div>
+            
+            <div class="card-login-content">
+                <h2 id="form-title" class="mt-5">Sign In</h2>
+                <form id="auth-form" method="POST">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div id="extra-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirm-password" name="confirm-password">
+                        </div>
+                    </div>
+                    <button type="submit" id="auth-button" class="btn btn-primary">Sign In</button>
+                </form>
+                <p class="toggle-text">
+                    <a href="#" id="toggle-form">Don't have an account? Sign Up</a>
+                </p>
+            </div>
+            
+        </div>
     </main>
 </body>
 
 <script type="module" src="{{ url_for('static', filename='js/Cleanser.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='js/AgentInterface.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/Handshake.js') }}"></script>
 <script>
 window.appConfig = {
     clientUUID: "{{ client_uuid }}",
     csrfToken: "{{ csrf_token }}"
 };
 
-const cardPremium = document.getElementById("card-premium");
-const closeBtn = document.getElementById("closeBtn");
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle fullscreen for all card-premium elements
+    document.querySelectorAll('.card-premium').forEach(cardPremium => {
+        cardPremium.addEventListener('click', function() {
+            this.classList.add('fullscreen');
+        });
+    });
 
-cardPremium.addEventListener("click", () => {
-    cardPremium.classList.add("fullscreen");
+    // Toggle fullscreen for all card-login elements
+    document.querySelectorAll('.card-login').forEach(cardLogin => {
+        cardLogin.addEventListener('click', function() {
+            this.classList.add('l-fullscreen');
+        });
+    });
+
+    // Close fullscreen for card-premium on close button click
+    document.querySelectorAll('.close-btn').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function(event) {
+            // Prevent the click event from propagating to the parent container
+            event.stopPropagation();
+
+            // Get the parent card-premium container
+            const cardPremium = this.closest('.card-premium');
+            if (cardPremium) {
+                cardPremium.classList.remove('fullscreen');
+            }
+        });
+    });
+
+    // Close fullscreen for card-login on close button click
+    document.querySelectorAll('.l-close-btn').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function(event) {
+            // Prevent the click event from propagating to the parent container
+            event.stopPropagation();
+
+            // Get the parent card-login container
+            const cardLogin = this.closest('.card-login');
+            if (cardLogin) {
+                cardLogin.classList.remove('l-fullscreen');
+            }
+        });
+    });
 });
 
-closeBtn.addEventListener("click", (event) => {
-    event.stopPropagation();
-    cardPremium.classList.remove("fullscreen");
+document.getElementById('toggle-form').addEventListener('click', function(event) {
+event.preventDefault();
+const formTitle = document.getElementById('form-title');
+const authButton = document.getElementById('auth-button');
+const extraFields = document.getElementById('extra-fields');
+
+if (formTitle.innerText === 'Sign In') {
+    formTitle.innerText = 'Sign Up';
+    authButton.innerText = 'Sign Up';
+    extraFields.style.display = 'block';
+    this.innerText = 'Already have an account? Sign In';
+} else {
+    formTitle.innerText = 'Sign In';
+    authButton.innerText = 'Sign In';
+    extraFields.style.display = 'none';
+    this.innerText = "Don't have an account? Sign Up";
+}
+});
+
+document.getElementById('auth-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+    const isSignUp = document.getElementById('form-title').innerText === 'Sign Up';
+    const endpoint = isSignUp ? '/signup' : '/login';
+    const jsonObject = Object.fromEntries(formData.entries());
+    console.log(jsonObject);
+
+    apiRequest("/sign_user_in", "POST", JSON.stringify(jsonObject))
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
+    
+    apiRequest("/register_user", "POST", JSON.stringify(jsonObject))
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
+
 });
 </script>
-<script type="module" src="{{ url_for('static', filename='js/Handshake.js') }}"></script>
+
 
 {% block script %}{% endblock %}
 </html>

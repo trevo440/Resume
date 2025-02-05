@@ -75,6 +75,47 @@ Return only the JSON string with the specified keys and content. Use "Not provid
 Resume Text: 
 `;
 
+const resumeSchema = {
+    "Contact Information": {
+        full_name: "string",
+        phone_number: "string",
+        email: "string",
+        linkedin: "string",
+        website: "string",
+        address: "string"
+    },
+    "Summary or Objective": {
+        summary: "array"
+    },
+    "Skills": {
+        skills: "array"
+    },
+    "Work Experience": {
+        work_experience: "array"
+    },
+    "Education": {
+        education: "array"
+    },
+    "Certifications": {
+        certifications: "array"
+    },
+    "Projects": {
+        projects: "array"
+    },
+    "Awards and Honors": {
+        awards: "array"
+    },
+    "Volunteer Experience": {
+        volunteer_experience: "array"
+    },
+    "Languages": {
+        languages: "array"
+    },
+    "Publications": {
+        publications: "array"
+    }
+};
+
 const jdPrompt = `
 "Given the following job description, extract the relevant sections and organize them into a valid JSON string format. The JSON should follow this specific structure:
 
@@ -102,6 +143,24 @@ Return only the JSON string with the specified keys and content. Use "Not provid
 Job Description: 
 `;
 
+const jdSchema = {
+    "Job Title": "string",
+    "company_name": "string",
+    "position": "string",
+    "Keywords": {
+        "technical": "array",
+        "soft": "array"
+    },
+    "Actions": {
+        "email_to": "string",
+        "survey": "array"
+    },
+    "Statements": {
+        "quantifiable": "array",
+        "ats": "array"
+    }
+};
+
 const intersectPrompt = `
 Given the following Resume JSON, and Job Requirements JSON, update content sections to evaluate higher in comparing the two:
 
@@ -124,6 +183,18 @@ technologies_used: A list of technologies used in the project. Use keywords here
 Return ONLY the JSON string with the specified keys and content. Use "Not provided" in place of any empty values.
 
 `;
+
+const intersectSchema = {
+    "summary": "string",
+    "skills": "array",
+    "work_experience": "array",
+    "projects": {
+        "project_title": "string",
+        "description": "string",
+        "technologies_used": "array"
+    }
+};
+
 import { Cleanser } from './Cleanser.js';
 /* Interface with OpenAI - update for model selection later */
 export class PromptManager {
@@ -142,6 +213,8 @@ export class PromptManager {
         } else { 
             this.endpoint = ''
         }
+        this.isValid = false;
+        this.validateKey();
     }
 
     async pullResume(resumeText) {
@@ -165,28 +238,15 @@ export class PromptManager {
             }
     
             responseContent = this.cleaner.ensureGptFormat(responseContent);
+            if (!this.cleaner.validateSchema(responseContent, resumeSchema)) {
+                throw new Error(`Error fetching completion: ${response.statusText}`);
+            }
             return JSON.parse(responseContent);
 
         } catch (error) {
             console.error("Error in pullResume:", error);
             return {};
         }
-    }
-    
-
-    async pullResume(resumeText) {
-        resumeText = this.cleaner.noQuote(resumeText);
-        const instruct = `${resumePrompt}${resumeText}\n\n{\n    \"task\": \"GPT Response to be usable in programming loop\",\n    \"details\": \"Return a valid JSON string in the correct format only and NOTHING ELSE. Include ALL keys, even if they are empty.\" \n},`;
-
-        const gpt_response = {
-            model: this.model,
-            messages: [{ role: "system", content: instruct }]
-        };
-
-        const response = await this.fetchCompletion(gpt_response);
-        let responseContent = response.choices[0].message.content;
-        responseContent = this.cleaner.ensureGptFormat(responseContent);
-        return JSON.parse(responseContent);
     }
 
     async assessJD(jobDescription) {
@@ -201,6 +261,9 @@ export class PromptManager {
         const response = await this.fetchCompletion(data);
         let responseContent = response.choices[0].message.content;
         responseContent = this.cleaner.ensureGptFormat(responseContent);
+        if (!this.cleaner.validateSchema(responseContent, jdSchema)) {
+            throw new Error(`Error fetching completion: ${response.statusText}`);
+        }
         return JSON.parse(responseContent);
     }
 
@@ -215,13 +278,19 @@ export class PromptManager {
         const response = await this.fetchCompletion(data);
         let responseContent = response.choices[0].message.content;
         responseContent = this.cleaner.ensureGptFormat(responseContent);
-        console.log(responseContent);
+        if (!this.cleaner.validateSchema(responseContent, intersectSchema)) {
+            throw new Error(`Error fetching completion: ${response.statusText}`);
+        }
         return JSON.parse(responseContent);
     }
 
     async fetchCompletion(data) {
         /* any additional functionality for 
            each vendor will go here */
+        if (!this.isValid) {
+            throw new Error("Invalid API Key or connection issue.");
+        }
+
         const response = await fetch(this.endpoint, {
             method: 'POST',
             headers: {
@@ -236,6 +305,31 @@ export class PromptManager {
         }
 
         return response.json();
+    }
+
+    async validateKey() {
+        if (!this.endpoint || !this.apiKey) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.apiKey}`
+                },
+                body: JSON.stringify({
+                    model: this.model,
+                    messages: [{ role: "system", content: "ping" }],
+                    max_tokens: 1
+                })
+            });
+
+            this.isValid = response.ok;
+        } catch (error) {
+            this.isValid = false;
+        }
     }
 }
 

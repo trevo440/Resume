@@ -1,19 +1,12 @@
 """
 GENERIC TODO:
-> Validate EVERYTHING on JS side -| 25%
-    > test connection ??
-    > resume submit / update (full)
-        > on error allow user to fix JSON maybe??
-    > resume update (partial)
-    > job description extraction
-
+> Create login + user management w/ Redis -| 75%
 > Update Web UI -| 20%
     > Make sure to include branding, contact, etc.
-    > completely fix UI (resume updater) components
+    > completely fix UI (resume updater) components + include_section preferences
     > Add to each sections a "update details here" functionality from GPT
     > Create 10+ resume templates (structure) w/ color themes (theory)
 
-> Create login + user management w/ Redis -| 50%
 > setup stripe + dynamic rate limit & Resume Template adjustments w/ login -| 0%
 > update all CSS to be device-friendly -| 0%
 """
@@ -25,6 +18,7 @@ from flask import Flask, render_template, make_response, redirect, request, sess
 from flask_session import Session
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # ---------------------------
 # third party
@@ -58,21 +52,18 @@ app = Flask(__name__)
 # Configure Redis for Session
 # ---------------------------
 
-redis_sessions_anon = redis.StrictRedis(host="redis", port=6379, db=0, decode_responses=True)
-redis_sessions_auth = redis.StrictRedis(host="redis", port=6379, db=1, decode_responses=True)
-redis_sessions_rate = redis.StrictRedis(host="redis", port=6379, db=2, decode_responses=True)
-
+redis_sessions_auth = redis.StrictRedis(host="redis", port=6379, db=1)
 
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = True 
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_KEY_PREFIX'] = 'kwip:'
-app.config['SESSION_REDIS'] = redis_sessions_anon
-app.config['RATELIMIT_STORAGE_URI'] = redis_sessions_rate
+app.config['SESSION_REDIS'] = redis.StrictRedis(host="redis", port=6379, db=0)
+app.config['RATELIMIT_STORAGE_URI'] = redis.StrictRedis(host="redis", port=6379, db=2)
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB limit
 with open("./pswd.txt", "r") as f:
     sendgrid_key = f.read()
 
-auth_sessions = {}
 # ---------------------------
 # Configure Limiter for Free
 # ---------------------------
@@ -123,8 +114,10 @@ def handshake_required(func):
     
     return decorated_function
 
+
 @app.before_request
 def check_session_data():
+    
     if "user_auth" not in session:
         session["user_auth"] = False
 
@@ -133,25 +126,27 @@ def check_session_data():
 
     if "csrf_token" not in session:
         session["csrf_token"] = os.urandom(32).hex()
-    
-    # need to do this with all values
+
     if not session["user_auth"]:
         if "resume_provided" not in session:
             session["resume_provided"] = False
     
     if session["user_auth"]:
-        if not redis_sessions_auth.hget(session["user_key"], "resume_provided"):
-            redis_sessions_auth.hset(session["user_key"], "resume_provided", False)
+        resume_provided = redis_sessions_auth.hget(session["user_key"], "resume_provided") 
+        if resume_provided is None or resume_provided == "False":
+            redis_sessions_auth.hset(session["user_key"], "resume_provided", "False")
+            session['resume_provided'] = False
+        else:
+            session["resume_provided"] = True
 
-    values_provided = session['resume_provided']
-    if not values_provided and request.endpoint not in [
+    if not session["resume_provided"] and request.endpoint not in [
         'static', 
         'set_job_description', 
         'set_resume_sections',
-        'get-started',
+        'get_started',
         'download_pdf'
     ]:
-        return redirect(url_for('get-started'))
+        return redirect(url_for('get_started'))
 
 
 # ---------------------------
@@ -232,6 +227,7 @@ def set_partial_resume_sections():
 def get_resume_sections():
     return jsonify(session.get('resume_sections'))
 
+
 # ---------------------------
 # FormView
 # ---------------------------
@@ -239,12 +235,13 @@ def get_resume_sections():
 Form: Render a form that calls GPT responses
 """
 @app.route('/get-started', methods=['GET'])
-def set_all_data():
+def get_started():
     return render_template(
         'set_all_data.html',
         client_uuid=session["client_uuid"], 
         csrf_token=session["csrf_token"],
     )
+
 # ---------------------------
 # PDFs
 # ---------------------------
@@ -364,7 +361,6 @@ def view_example(version):
 # ---------------------------
 # MAIL - SENDGRID -
 # ---------------------------
-
 def send_security_code_email(recipient_email):
     try:
         sg = sendgrid.SendGridAPIClient(api_key=sendgrid_key)
@@ -388,23 +384,10 @@ def send_security_code_email(recipient_email):
 
     except Exception:
         return None
-
-# Effectively, allow user to sign in
-@app.route('/send_validation_email', methods=['POST'])
-@handshake_required
-def send_verification_email():
-    data = request.get_json()
     
-    # set some user password here later too
-    # also ensure session sets localStorage email
-    
-    response = send_security_code_email(data["user_email"])
-    if response is not None:
-        return "", 204
-    return "", 400
-
 @app.route('/validate_email_code', methods=['POST'])
 @handshake_required
+@limiter.limit("5 per hour")
 def validate_verification_email():
     auth_expiry = session.get("auth_expiry")
     if auth_expiry and (datetime.now(timezone.utc)).timestamp() > auth_expiry:
@@ -413,17 +396,46 @@ def validate_verification_email():
     
     data = request.get_json()
     if session.get("auth_code") == data["auth_code"]:
+        """Need to set all user values // transfer from session"""
         session.clear()
         
         email = data["user_email"]
         session["user_key"] = f"email:{email}"
-        # theoretically add password check here maybe
         session["user_auth"] = True
+
         if not redis_sessions_auth.hget(session["user_key"], "role"):
             redis_sessions_auth.hset(session["user_key"], "role", "basic")
         return "", 204
     return "", 403
 
+
+# ---------------------------
+# USER
+# ---------------------------
+app.route("/sign_user_in", methods=['POST'])
+@handshake_required
+@limiter.limit("5 per hour")
+def sign_user_in():
+    """Need to grab all user values // transfer from redis_auth"""
+    data = request.get_json()
+    email = f'email:{data["email"]}'
+    pwd_hash = redis_sessions_auth.hget(email, "password")
+    
+    if pwd_hash is not None and check_password_hash(pwd_hash, data["password"]):
+        session["user_auth"] = True
+        session["user_key"] = f"email:{email}"
+
+app.route("/register_user", methods=['POST'])
+@handshake_required
+@limiter.limit("5 per hour")
+def register_user():
+    data = request.get_json()
+    session["no_auth_email"] = data["email"]
+    session["no_auth_pswd_hash"] = generate_password_hash(data["password"])
+    response = send_security_code_email(data["user_email"])
+    if response is not None:
+        return "", 204
+    return "", 400
 
 # ---------------------------
 # LOGOUT

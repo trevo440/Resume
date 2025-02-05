@@ -1,11 +1,11 @@
-.card-premium {
+.card-login {
     position: fixed;
-    right: 0px;
-    top: 50%;
+    right: 85%;
+    top: 4%;
     transform: translateY(-50%);
-    width: 15%;
-    height: 100%;
-    background: #1e1e1e; /* Dark background */
+    width: 13%;
+    height: 4%;
+    background: #78bbe260; /* Dark background */
     color: #ffffff; /* White text */
     border-radius: 16px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); /* Stronger shadow */
@@ -17,12 +17,12 @@
     border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
 }
 
-.card-premium:hover {
+.card-login:hover {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); /* Stronger hover effect */
     transform: translateY(-50%) scale(1.05); /* Slightly scale on hover */
 }
 
-.card-premium.fullscreen {
+.card-login.l-fullscreen {
     position: fixed;
     right: 10vw;
     top: 10vh;
@@ -35,50 +35,74 @@
     background: #121212; /* Even darker fullscreen mode */
 }
 
-.card-premium-content {
+.card-login-content {
+    display: none;
     text-align: center;
     font-size: 18px;
     font-weight: bold;
     transition: opacity 0.3s ease-in-out;
 }
 
-.card-premium.fullscreen .card-premium-content {
-    display: none;
-}
-
-.close-btn {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 24px;
-    color: #bbb;
-    cursor: pointer;
-    display: none;
-    transition: color 0.3s ease-in-out;
-    z-index: 99999999;
-}
-
-.stripe{
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 24px;
-    color: #bbb;
-    background-color: #fff;
-    cursor: pointer;
-    display: none;
-    transition: color 0.3s ease-in-out;
-    z-index: 0;
-}
-
-.card-premium.card-premium.fullscreen .stripe {
-    display: block
-}
-
-.card-premium.fullscreen .close-btn {
+.card-login.l-fullscreen .card-login-content {
     display: block;
 }
 
-.close-btn:hover {
+.l-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    color: #bbb;
+    cursor: pointer;
+    display: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.card-login.login-link {
+    color: white;
+    display:flex;
+}
+.login-link{
+    color: white;
+}
+
+.card-login.l-fullscreen .login-link {
+    display: none;
+}
+
+.card-login.l-fullscreen .l-close-btn {
+    display: block;
+}
+
+.l-close-btn:hover {
     color: #ffffff;
+}
+
+.card-login-content {
+    background: #1e1e1e;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    text-align: center;
+    max-width: 400px;
+    margin: auto;
+}
+.form-control {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+}
+.btn-primary {
+    background: #007bff;
+    border: none;
+}
+.btn-primary:hover {
+    background: #0056b3;
+}
+.toggle-text {
+    margin-top: 10px;
+}
+.toggle-text a {
+    color: #007bff;
 }
