@@ -7,9 +7,6 @@ def check_session_data():
     if "user_auth" not in session:
         session["user_auth"] = False
 
-    if "user_email" not in session:
-        session["user_email"] = str(uuid.uuid4())
-
     if "client_uuid" not in session:
         session["client_uuid"] = str(uuid.uuid4())
 

@@ -1,4 +1,5 @@
 from flask import render_template, session
+from lib.user_interactions.auth_session import session_getter
 
 def home():
     return render_template(
@@ -8,7 +9,7 @@ def home():
         client_uuid=session["client_uuid"], 
         csrf_token=session["csrf_token"],
         user_auth=session["user_auth"],
-        user_email=session["user_email"],
+        user_email=session.get("user_key", "").replace("email:", ""),
     )
 
 def get_started():
@@ -17,5 +18,5 @@ def get_started():
         client_uuid=session["client_uuid"], 
         csrf_token=session["csrf_token"],
         user_auth=session["user_auth"],
-        user_email=session["user_email"],
+        user_email=session.get("user_key", "").replace("email:", ""),
     )

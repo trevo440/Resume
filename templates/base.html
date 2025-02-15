@@ -37,12 +37,22 @@
 
 </head>
 <body>
-    <header>
-        <h1>{{ title }}</h1>
-    </header>
-
-    <main>
-       
+    <main> 
+        <nav class="navbar">
+            <h1 class="navbar-title">Automatic Resume Builder</h1>
+            <div class="navbar-links">
+                {% if user_auth %}
+                <a href="{{ url_for('logout') }}" class="btn secondary-btn">Logout</a> 
+                {% else %}
+                <a href="{{ url_for('logout') }}" class="btn secondary-btn">Clear Session</a>
+                {% endif %}
+            </div>
+        </nav>
+        {% if user_auth %}
+            <div class="card-logout" id="card-logout">
+                <h3 style="text-align:left; align-items: left;"><i>Welcome {{ user_email }}</i></h3>
+            </div>
+        {% endif %}
         {% block content %}{% endblock %}
         <!-- If NOT user = premium ELSE account management -->
         <div class="card-premium" id="card-premium">
@@ -57,7 +67,6 @@
                 </ul>
             </div>
         </div>
-    
       
     <div class="card-login-content">
         <h2 id="form-title" class="mt-5">Sign In</h2>
@@ -90,11 +99,6 @@
         </p>
     </div>
     
-
-    <div id="card-logout">
-        <p>{{user_email}}</p>
-        <a href="/logout" style="margin-left: 3px;"> Logout</a>
-    </div> 
 </body>
 
 <script type="module" src="{{ url_for('static', filename='js/Cleanser.js') }}"></script>
