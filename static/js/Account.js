@@ -38,7 +38,8 @@ document.getElementById('verify-code').addEventListener('input', function() {
                 }
 
                 if (res.status === 204) {
-                    // Effectively we need to clear out the sign-in/sign-up stuff and replace it with the account stuff
+                    document.getElementById("card-login-content").style.display = "none";
+                    document.getElementById("card-logout").style.display = "block";
                 }
             })
             .catch(error => console.error('Error:', error));   

@@ -214,7 +214,6 @@ export class PromptManager {
             this.endpoint = ''
         }
         this.isValid = false;
-        this.validateKey();
     }
 
     async pullResume(resumeText) {
@@ -287,9 +286,11 @@ export class PromptManager {
     async fetchCompletion(data) {
         /* any additional functionality for 
            each vendor will go here */
-        if (!this.isValid) {
-            throw new Error("Invalid API Key or connection issue.");
-        }
+        this.validateKey().then(() => {
+            if (!this.isValid) {
+                throw new Error("Invalid API Key or connection issue.");
+            }
+        });
 
         const response = await fetch(this.endpoint, {
             method: 'POST',
@@ -313,6 +314,7 @@ export class PromptManager {
         }
         
         try {
+            
             const response = await fetch(this.endpoint, {
                 method: 'POST',
                 headers: {
@@ -325,7 +327,6 @@ export class PromptManager {
                     max_tokens: 1
                 })
             });
-
             this.isValid = response.ok;
         } catch (error) {
             this.isValid = false;

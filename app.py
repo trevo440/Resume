@@ -121,6 +121,9 @@ def check_session_data():
     if "user_auth" not in session:
         session["user_auth"] = False
 
+    if "user_email" not in session:
+        session["user_email"] = str(uuid.uuid4())
+
     if "client_uuid" not in session:
         session["client_uuid"] = str(uuid.uuid4())
 
@@ -164,6 +167,8 @@ def home():
         cur=session.get('job_description'),
         client_uuid=session["client_uuid"], 
         csrf_token=session["csrf_token"],
+        user_auth=session["user_auth"],
+        user_email=session["user_email"],
     )
 
 # ---------------------------
@@ -244,6 +249,8 @@ def get_started():
         'set_all_data.html',
         client_uuid=session["client_uuid"], 
         csrf_token=session["csrf_token"],
+        user_auth=session["user_auth"],
+        user_email=session["user_email"],
     )
 
 # ---------------------------
@@ -405,7 +412,7 @@ def validate_verification_email():
         email = session["no_auth_email"]
         session.clear()
         
-        
+        session["user_email"] = email
         session["user_key"] = f"email:{email}"
         session["user_auth"] = True
 
