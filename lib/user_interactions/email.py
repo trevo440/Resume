@@ -5,6 +5,7 @@ from sendgrid.helpers.mail import Mail, Email, To, Personalization
 from lib.security.handshake import handshake_required
 from lib.app_conf import limiter
 from lib.user_interactions.auth_session import redis_sessions_auth
+from lib.user_interactions.roles import ACCOUNT_ROLES
 
 with open("./pswd.txt", "r") as f:
     sendgrid_key = f.read()
@@ -44,7 +45,6 @@ def validate_verification_email():
     data = request.get_json()
     if session.get("auth_code") == data["verify-code"]:
         """Need to set all user values // transfer from session"""
-        print("success")
         email = session["no_auth_email"]
         session.clear()
         
@@ -52,10 +52,11 @@ def validate_verification_email():
         session["user_key"] = f"email:{email}"
         session["user_auth"] = True
 
-        # add this to redis_sessions_auth
-        # session["no_auth_pswd_hash"]
+        if not redis_sessions_auth.hget(session["user_key"], "password"):
+            redis_sessions_auth.hset(session["user_key"], "password", session["no_auth_pswd_hash"])
 
         if not redis_sessions_auth.hget(session["user_key"], "role"):
-            redis_sessions_auth.hset(session["user_key"], "role", "basic")
+            redis_sessions_auth.hset(session["user_key"], "role", ACCOUNT_ROLES["basic"])
+
         return "", 204
     return "", 403

@@ -64,6 +64,12 @@ document.getElementById('auth-form').addEventListener('submit', function(event) 
     if (isSignUp) {
         apiRequest("/register_user", "POST", jsonObject)
             .then(res => {
+                console.log(res.status);
+                console.log(res.status_code);
+                if (res.status === 409) {
+                    alert('Email already exists. Please sign in.');
+                    return;
+                }
                 if (!res.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -78,6 +84,10 @@ document.getElementById('auth-form').addEventListener('submit', function(event) 
     }
     apiRequest("/sign_user_in", "POST", jsonObject)
         .then(res => {
+            if (res.status === 409) {
+                alert('Email already exists. Please sign in.');
+                return res.json();
+            }
             if (!res.ok) {
                 throw new Error('Network response was not ok');
             }

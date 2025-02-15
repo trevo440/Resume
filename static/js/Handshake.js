@@ -19,7 +19,9 @@ function cleanData(data) {
  * - Includes a 10-second timeout for network reliability.
  * - Returns sanitized JSON responses or errors.
  */
-export async function apiRequest(url, method = "GET", body = null) {
+
+export async function apiRequest(url, method = "GET", body = null, accepted = new Set([200, 201, 204, 401, 409])) {
+    const acceptedStatusCodes = accepted
     const headers = {
         "Content-Type": "application/json",
         "X-Client-UUID": clientUUID,
@@ -37,8 +39,8 @@ export async function apiRequest(url, method = "GET", body = null) {
         const response = await fetch(url, options);
         clearTimeout(timeoutId);
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        if (!acceptedStatusCodes.has(response.status)) {
+            throw new Error(`Unexpected status code: ${response.status} ${response.statusText}`);
         }
 
         return response;
