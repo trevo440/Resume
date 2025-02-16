@@ -8,7 +8,7 @@
     All data is persisted through REDIS. This includes user information, and any historic processed job postings. 
 
 #### TODO
-- [_] Triple check all data persistence and access
-  - [_] Ensure information is being properly moved through this application.
-  - [_] Create an Admin Page to allow for basic information mangement
+- [ ] Triple check all data persistence and access
+  - [ ] Ensure information is being properly moved through this application.
+  - [ ] Create an Admin Page to allow for basic information mangement
 - 
