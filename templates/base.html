@@ -46,6 +46,7 @@
                 {% else %}
                 <a href="{{ url_for('logout') }}" class="btn secondary-btn">Clear Session</a>
                 {% endif %}
+                {% block navigation %}{% endblock %}
             </div>
         </nav>
         {% if user_auth %}

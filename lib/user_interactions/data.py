@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from lib.validators import default_and_clean_jd, default_and_cleanse_rm
+from lib.user_interactions.data_validators import default_and_clean_jd, default_and_cleanse_rm
 from lib.security.handshake import handshake_required
 from lib.user_interactions.auth_session import session_setter, session_getter
 from lib.app_conf import limiter

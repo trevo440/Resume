@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% block navigation %}
+    {% if resume_provided %}
+    <a href="{{ url_for('home') }}" class="btn primary-btn">Main</a>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     <form id="user-base-info" class="container" method="POST">
         <div class="form-group">

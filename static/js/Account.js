@@ -91,7 +91,9 @@ document.getElementById('auth-form').addEventListener('submit', function(event) 
             if (!res.ok) {
                 throw new Error('Network response was not ok');
             }
-            return res.json();
+            if (res.status === 200) {
+                window.location.reload();
+            }
         })
         .then(data => console.log(data))
         .catch(error => console.error('Error:', error));
