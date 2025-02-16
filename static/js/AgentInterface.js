@@ -144,9 +144,10 @@ Job Description:
 `;
 
 const jdSchema = {
-    "Job Title": "string",
-    "company_name": "string",
-    "position": "string",
+    "Job Title":{
+        "company_name": "string",
+        "position": "string"
+    },
     "Keywords": {
         "technical": "array",
         "soft": "array"
@@ -188,11 +189,7 @@ const intersectSchema = {
     "summary": "string",
     "skills": "array",
     "work_experience": "array",
-    "projects": {
-        "project_title": "string",
-        "description": "string",
-        "technologies_used": "array"
-    }
+    "projects": "array"
 };
 
 import { Cleanser } from './Cleanser.js';
@@ -277,6 +274,7 @@ export class PromptManager {
         const response = await this.fetchCompletion(data);
         let responseContent = response.choices[0].message.content;
         responseContent = this.cleaner.ensureGptFormat(responseContent);
+        console.log(responseContent);
         if (!this.cleaner.validateSchema(responseContent, intersectSchema)) {
             throw new Error(`Error fetching completion: ${response.statusText}`);
         }

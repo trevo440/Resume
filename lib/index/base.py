@@ -5,7 +5,7 @@ def home():
     return render_template(
         'home.html',
         res=session_getter('resume_sections'),
-        cur=session.get('job_description'),
+        cur=session_getter('job_description'),
         client_uuid=session["client_uuid"], 
         csrf_token=session["csrf_token"],
         user_auth=session["user_auth"],

@@ -2,9 +2,9 @@ from flask import render_template, make_response, session
 from weasyprint import HTML
 import tempfile, uuid, pikepdf
 from datetime import datetime
-from lib.app_conf import limiter
 
-# theres a better way to refactor this for optimizations later
+from lib.app_conf import limiter
+from lib.user_interactions.auth_session import session_getter
 
 def update_pdf_metadata(pdf_path, metadata):
     with pikepdf.open(pdf_path, allow_overwriting_input=True) as pdf:
@@ -14,8 +14,8 @@ def update_pdf_metadata(pdf_path, metadata):
 
 @limiter.limit("5 per hour")
 def download_pdf(resume_version='basic'):
-    res = session.get('resume_sections', '')
-    job = session.get('job_description')
+    res = session_getter('resume_sections')
+    job = session_getter('job_description')
 
     contact_information = res['Contact Information']
     summary_or_objective = res['Summary or Objective']
