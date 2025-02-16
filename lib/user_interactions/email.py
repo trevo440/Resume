@@ -48,7 +48,6 @@ def validate_verification_email():
         email = session["no_auth_email"]
         session.clear()
         
-        session["user_email"] = email
         session["user_key"] = f"email:{email}"
         session["user_auth"] = True
 
