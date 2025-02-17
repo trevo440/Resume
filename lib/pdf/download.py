@@ -1,4 +1,4 @@
-from flask import render_template, make_response, session
+from flask import render_template, make_response
 from weasyprint import HTML
 import tempfile, uuid, pikepdf
 from datetime import datetime
