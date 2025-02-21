@@ -29,6 +29,7 @@
   - [ ] Ensure information is being properly moved through this application.
   - [ ] Create an Admin Page to allow for basic information mangement
   - [ ] Create reports for application traffic, availible to users
+  - [ ] Allow users to update status of specific Resume's.
 - [ ] Aggregate job description data
   - [ ] Collect and create reports, + API accessibility for premium
 - [ ] Create Account Roles
