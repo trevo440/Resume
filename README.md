@@ -1,5 +1,51 @@
 # Automatic Resume Builder
-    The primary entry-points to this project are availible in the table below. It is recommended the reader goes through this document to understand the system and it's components.
+
+```mermaid
+graph TD;
+    
+    subgraph Client
+        Browser[Web Browser]
+    end
+
+    subgraph Backend
+        API[Flask]
+        Auth[Authentication Service]
+    end
+
+    subgraph Datastore
+        StandardSession[Redis Cache]
+        AuthSession[Redis Cache Auth]
+    end
+
+    subgraph Auth
+        MailServer[MFA]
+        TestHash[HashCheck]
+    end
+
+    subgraph LLM
+        subgraph ClientLLM
+          LLMClient[Client API Key]
+          LLMLocal[Local API Ollama]
+        end
+    end
+
+    Client -->|API Calls| API
+    Client -->|Client Key + Request| ClientLLM
+    ClientLLM --> |Content| Client
+    API -->|Content| Client
+
+    API --> |Premium User |ServerLLM
+    ServerLLM --> |Content| API
+    
+    API -->|Auth Requests| Auth
+    API -->|Cache Lookups| Datastore
+    API -->|Caches Data| Datastore
+    Auth -->|UserKey| API
+
+
+    classDef component fill:#f9f,stroke:#333,stroke-width:2px;
+    class Browser,Mobile,LB,API,Auth,Worker,DB,Cache,S3 component;
+```
 
 |||
 |:---:|:---:|
