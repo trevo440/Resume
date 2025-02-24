@@ -120,7 +120,9 @@
 <div class="container">
     {% if res %}
     <section class="cur-data">
-        <h4>Candidate Resume</h4>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <h4>Candidate Resume</h4>
+        </div>
         <div class="card">
             <div class="tabs">
                 <div class="tab active" data-tab="tab1">Contact Information</div>
@@ -136,155 +138,150 @@
                 <div class="tab" data-tab="tab11">Publications</div>
             </div>
             <div class="content">
-                <div id="tab1" class="tab-content active">This is content for Tab 1.</div>
-                <div id="tab2" class="tab-content">This is content for Tab 2.</div>
-                <div id="tab3" class="tab-content">This is content for Tab 3.</div>
-                <div id="tab4" class="tab-content">This is content for Tab 2.</div>
-                <div id="tab5" class="tab-content">This is content for Tab 3.</div>
-                <div id="tab6" class="tab-content">This is content for Tab 2.</div>
-                <div id="tab7" class="tab-content">This is content for Tab 3.</div>
-                <div id="tab8" class="tab-content">This is content for Tab 2.</div>
-                <div id="tab9" class="tab-content">This is content for Tab 3.</div>
-                <div id="tab10" class="tab-content">This is content for Tab 2.</div>
-                <div id="tab11" class="tab-content">This is content for Tab 3.</div>
-            </div>
-        </div>
-        <!-- CONTACT INFO -->
-        <div class="cur-content">            
-            <div class="cur-item">
-                <h4>Contact Information</h4>
-                <table class="cur-table">
-                    <tbody>
-                        {% for field, value in res['Contact Information'].items() %}
-                        <tr class="cur-subitem">
-                            <td class="cur-key">{{ field.replace('_', ' ').title() }}:</td>
-                            <td>
-                                <input type="text" name="contact_{{ field }}" value="{{ value }}" class="form-input">
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-            <div class="cur-content">
-                <form method="POST" action="{{ url_for('set_resume_sections') }}" id="resume-update-sections">
-                    <!-- Contact Information -->
-                    <div class="cur-item">
-                        <h4>Contact Information</h4>
-                        <table class="cur-table">
-                            <tbody>
-                                {% for field, value in res['Contact Information'].items() %}
-                                <tr class="cur-subitem">
-                                    <td class="cur-key">{{ field.replace('_', ' ').title() }}:</td>
-                                    <td>
-                                        <input type="text" name="contact_{{ field }}" value="{{ value }}" class="form-input">
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                <div id="tab1" class="tab-content active">
+                    <div class="cur-content">            
+                        <div class="cur-item">
+                            <h4>Contact Information</h4>
+                            <table class="cur-table">
+                                <tbody>
+                                    {% for field, value in res['Contact Information'].items() %}
+                                    <tr class="cur-subitem">
+                                        <td class="cur-key">{{ field.replace('_', ' ').title() }}:</td>
+                                        <td>
+                                            <input type="text" name="contact_{{ field }}" value="{{ value }}" class="form-input">
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    
-    
+                </div>
+                <div id="tab2" class="tab-content">
                     <!-- Summary or Objective -->
-                    <div class="cur-item">
-                        <h4>Summary or Objective</h4>
-                        <textarea name="summary_or_objective" class="form-input" rows="5">{{ res['Summary or Objective']['summary'] | join('\n') }}</textarea>
+                    <div class="cur-content"> 
+                        <div class="cur-item">
+                            <h4>Summary or Objective</h4>
+                            <textarea name="summary_or_objective" class="form-input" rows="5">{{ res['Summary or Objective']['summary'] | join('\n') }}</textarea>
+                        </div>
                     </div>
-    
+                </div>
+                <div id="tab3" class="tab-content">
                     <!-- Skills -->
-                    <div class="cur-item">
-                        <h4>Skills</h4>
-                        <textarea name="skills" class="form-input">{{ res['Skills']['skills'] | join(', ') }}</textarea>
+                    <div class="cur-content"> 
+                        <div class="cur-item">
+                            <h4>Skills</h4>
+                            <textarea name="skills" class="form-input">{{ res['Skills']['skills'] | join(', ') }}</textarea>
+                        </div>
                     </div>
-    
+                </div>
+                <div id="tab4" class="tab-content">
                     <!-- Work Experience -->
-                    <div class="cur-item">
-                        <h4>Work Experience</h4>
-                        {% for job in res['Work Experience']['work_experience'] %}
-                            <div class="cur-subitem">
-                                <h5>{{ job['job_title'] }} at {{ job['company_name'] }}</h5>
-                                <input type="text" name="job_title_{{ loop.index }}" value="{{ job['job_title'] }}" class="form-input">
-                                <input type="text" name="company_name_{{ loop.index }}" value="{{ job['company_name'] }}" class="form-input">
-                                <input type="text" name="dates_of_employment_{{ loop.index }}" value="{{ job['dates_of_employment'] }}" class="form-input">
-                                <textarea name="responsibilities_{{ loop.index }}" class="form-input" rows="4">{{ job['responsibilities'] | join(' ') }}</textarea>
-                            </div>
-                        {% endfor %}
+                    <div class="cur-content"> 
+                        <div class="cur-item">
+                            <h4>Work Experience</h4>
+                            {% for job in res['Work Experience']['work_experience'] %}
+                                <div class="cur-subitem">
+                                    <h5>{{ job['job_title'] }} at {{ job['company_name'] }}</h5>
+                                    <input type="text" name="job_title_{{ loop.index }}" value="{{ job['job_title'] }}" class="form-input">
+                                    <input type="text" name="company_name_{{ loop.index }}" value="{{ job['company_name'] }}" class="form-input">
+                                    <input type="text" name="dates_of_employment_{{ loop.index }}" value="{{ job['dates_of_employment'] }}" class="form-input">
+                                    <textarea name="responsibilities_{{ loop.index }}" class="form-input" rows="4">{{ job['responsibilities'] | join(' ') }}</textarea>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-    
+                </div>
+                <div id="tab5" class="tab-content">
                     <!-- Education -->
-                    <div class="cur-item">
-                        <h4>Education</h4>
-                        {% for edu in res['Education']['education'] %}
-                            <div class="cur-subitem">
-                                <h5>{{ edu['degree'] }} from {{ edu['institution_name'] }}</h5>
-                                <input type="text" name="degree_{{ loop.index }}" value="{{ edu['degree'] }}" class="form-input">
-                                <input type="text" name="institution_name_{{ loop.index }}" value="{{ edu['institution_name'] }}" class="form-input">
-                                <input type="text" name="graduation_date_{{ loop.index }}" value="{{ edu['graduation_date'] }}" class="form-input">
-                            </div>
-                        {% endfor %}
+                    <div class="cur-content"> 
+                        <div class="cur-item">
+                            <h4>Education</h4>
+                            {% for edu in res['Education']['education'] %}
+                                <div class="cur-subitem">
+                                    <h5>{{ edu['degree'] }} from {{ edu['institution_name'] }}</h5>
+                                    <input type="text" name="degree_{{ loop.index }}" value="{{ edu['degree'] }}" class="form-input">
+                                    <input type="text" name="institution_name_{{ loop.index }}" value="{{ edu['institution_name'] }}" class="form-input">
+                                    <input type="text" name="graduation_date_{{ loop.index }}" value="{{ edu['graduation_date'] }}" class="form-input">
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-    
+                </div>
+                <div id="tab6" class="tab-content">
                     <!-- Certifications -->
-                    <div class="cur-item">
-                        <h4>Certifications</h4>
-                        <textarea name="certifications" class="form-input">{{ res['Certifications']['certifications'] | join(', ') }}</textarea>
+                    <div class="cur-content"> 
+                        <div class="cur-item">
+                            <h4>Certifications</h4>
+                            <textarea name="certifications" class="form-input">{{ res['Certifications']['certifications'] | join(', ') }}</textarea>
+                        </div>
                     </div>
-    
+                </div>
+                <div id="tab7" class="tab-content">
                     <!-- Projects -->
-                    <div class="cur-item">
-                        <h4>Projects</h4>
-                        {% for project in res['Projects']['projects'] %}
-                            <div class="cur-subitem">
-                                <h5>{{ project['project_title'] }}</h5>
-                                <textarea name="project_description_{{ loop.index }}" class="form-input" rows="4">{{ project['description'] }}</textarea>
-                                <input type="text" name="technologies_used_{{ loop.index }}" value="{{ project['technologies_used'] | join(', ') }}" class="form-input">
-                                <input type="text" name="project_link_{{ loop.index }}" value="{{ project['project_link'] }}" class="form-input">
-                            </div>
-                        {% endfor %}
+                    <div class="cur-content"> 
+                        <div class="cur-item">
+                            <h4>Projects</h4>
+                            {% for project in res['Projects']['projects'] %}
+                                <div class="cur-subitem">
+                                    <h5>{{ project['project_title'] }}</h5>
+                                    <textarea name="project_description_{{ loop.index }}" class="form-input" rows="4">{{ project['description'] }}</textarea>
+                                    <input type="text" name="technologies_used_{{ loop.index }}" value="{{ project['technologies_used'] | join(', ') }}" class="form-input">
+                                    <input type="text" name="project_link_{{ loop.index }}" value="{{ project['project_link'] }}" class="form-input">
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-    
+                </div>
+                <div id="tab8" class="tab-content">
                     <!-- Awards and Honors -->
-                    <div class="cur-item">
-                        <h4>Awards and Honors</h4>
-                        <textarea name="awards" class="form-input">{{ res['Awards and Honors']['awards'] | join(', ') }}</textarea>
+                    <div class="cur-content"> 
+                        <div class="cur-item">
+                            <h4>Awards and Honors</h4>
+                            <textarea name="awards" class="form-input">{{ res['Awards and Honors']['awards'] | join(', ') }}</textarea>
+                        </div>
                     </div>
-    
+                </div>
+                <div id="tab9" class="tab-content">
                     <!-- Volunteer Experience -->
-                    <div class="cur-item">
-                        <h4>Volunteer Experience</h4>
-                        {% for volunteer in res['Volunteer Experience']['volunteer_experience'] %}
-                            <div class="cur-subitem">
-                                <h5>{{ volunteer.get('role_title', '') }} at {{ volunteer.get('organization_name', '') }}</h5>
-                                <textarea name="volunteer_responsibilities_{{ loop.index }}" class="form-input" rows="4">{{ volunteer.get('responsibilities', []) | join(', ') }}</textarea>
-                            </div>
-                        {% endfor %}
+                    <div class="cur-content"> 
+                        <div class="cur-item">
+                            <h4>Volunteer Experience</h4>
+                            {% for volunteer in res['Volunteer Experience']['volunteer_experience'] %}
+                                <div class="cur-subitem">
+                                    <h5>{{ volunteer.get('role_title', '') }} at {{ volunteer.get('organization_name', '') }}</h5>
+                                    <textarea name="volunteer_responsibilities_{{ loop.index }}" class="form-input" rows="4">{{ volunteer.get('responsibilities', []) | join(', ') }}</textarea>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-    
+                </div>
+                <div id="tab10" class="tab-content">
                     <!-- Languages -->
-                    <div class="cur-item">
-                        <h4>Languages</h4>
-                        <textarea name="languages" class="form-input">{{ res['Languages']['languages'] | join(', ') }}</textarea>
+                    <div class="cur-content">
+                        <div class="cur-item">
+                            <h4>Languages</h4>
+                            <textarea name="languages" class="form-input">{{ res['Languages']['languages'] | join(', ') }}</textarea>
+                        </div>
                     </div>
-    
+                </div>
+                <div id="tab11" class="tab-content">
                     <!-- Publications -->
-                    <div class="cur-item">
-                        <h4>Publications</h4>
-                        <textarea name="publications" class="form-input">{{ res['Publications']['publications'] | join(', ') }}</textarea>
+                    <div class="cur-content">
+                        <div class="cur-item">
+                            <h4>Publications</h4>
+                            <textarea name="publications" class="form-input">{{ res['Publications']['publications'] | join(', ') }}</textarea>
+                        </div>
                     </div>
-    
-                    <div class="cur-item">
-                        <code>If you feel you are missing any information please </code><a href="{{ url_for('logout') }}" style="color:white;">clear</a><code> your session and re-upload your Resume Text</code><br><br>
-                        <button type="submit" class="btn primary-btn">Update Resume</button>
-                    </div>
-                </form>
+                </div>
+                <div id="buttonContainer"></div> 
+            </div>   
+       </div>
             {% else %}
                 <p>No processed data available.</p>
             {% endif %}
-        </div>
-    </section>    
-       
+         
+    </section>        
 </div>
 
 {% endblock %}
