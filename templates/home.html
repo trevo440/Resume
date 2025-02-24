@@ -109,12 +109,65 @@
         </section>
     </div>    
 </div>
+ <!-- 
+    Instead of being a single form this needs to be multiple, each hitting the 
+    set_partial_resume_sections
+    endpoint. 
 
+    Update the styling to be card-based w/ tabs for each section, add option for view_mode on resume.
+    Then we can finally restylize the resume itself for download and start using this application.
+-->
 <div class="container">
+    {% if res %}
     <section class="cur-data">
         <h4>Candidate Resume</h4>
-        <div class="cur-content">
-            {% if res %}
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" data-tab="tab1">Contact Information</div>
+                <div class="tab" data-tab="tab2">Summary or Objective</div>
+                <div class="tab" data-tab="tab3">Skills</div>
+                <div class="tab" data-tab="tab4">Work Experience</div>
+                <div class="tab" data-tab="tab5">Education</div>
+                <div class="tab" data-tab="tab6">Certifications</div>
+                <div class="tab" data-tab="tab7">Projects</div>
+                <div class="tab" data-tab="tab8">Awards and Honors</div>
+                <div class="tab" data-tab="tab9">Volunteer Experience</div>
+                <div class="tab" data-tab="tab10">Languages</div>
+                <div class="tab" data-tab="tab11">Publications</div>
+            </div>
+            <div class="content">
+                <div id="tab1" class="tab-content active">This is content for Tab 1.</div>
+                <div id="tab2" class="tab-content">This is content for Tab 2.</div>
+                <div id="tab3" class="tab-content">This is content for Tab 3.</div>
+                <div id="tab4" class="tab-content">This is content for Tab 2.</div>
+                <div id="tab5" class="tab-content">This is content for Tab 3.</div>
+                <div id="tab6" class="tab-content">This is content for Tab 2.</div>
+                <div id="tab7" class="tab-content">This is content for Tab 3.</div>
+                <div id="tab8" class="tab-content">This is content for Tab 2.</div>
+                <div id="tab9" class="tab-content">This is content for Tab 3.</div>
+                <div id="tab10" class="tab-content">This is content for Tab 2.</div>
+                <div id="tab11" class="tab-content">This is content for Tab 3.</div>
+            </div>
+        </div>
+        <!-- CONTACT INFO -->
+        <div class="cur-content">            
+            <div class="cur-item">
+                <h4>Contact Information</h4>
+                <table class="cur-table">
+                    <tbody>
+                        {% for field, value in res['Contact Information'].items() %}
+                        <tr class="cur-subitem">
+                            <td class="cur-key">{{ field.replace('_', ' ').title() }}:</td>
+                            <td>
+                                <input type="text" name="contact_{{ field }}" value="{{ value }}" class="form-input">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+            <div class="cur-content">
                 <form method="POST" action="{{ url_for('set_resume_sections') }}" id="resume-update-sections">
                     <!-- Contact Information -->
                     <div class="cur-item">

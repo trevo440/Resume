@@ -82,6 +82,20 @@ class DefaultsRM:
         }]
     }
 
+    res_view = {
+        "Contact Information": "standard",
+        "Summary or Objective": "standard",
+        "Skills": "standard",
+        "Work Experience": "standard",
+        "Education": "standard",
+        "Certifications": "standard",
+        "Projects": "standard",
+        "Awards and Honors": "standard",
+        "Volunteer Experience": "standard",
+        "Languages": "standard",
+        "Publications": "standard"
+    }
+
     full = {
         "Contact Information": contact,
         "Summary or Objective": summary,
@@ -93,7 +107,8 @@ class DefaultsRM:
         "Awards and Honors": awards,
         "Volunteer Experience": volunteer_experience,
         "Languages": languages,
-        "Publications": publications 
+        "Publications": publications,
+        "Resume View": res_view 
     }
 
 class DefaultsJD:
@@ -444,6 +459,8 @@ def clean_jd_statements(statements):
         "ats": ats
     }
 
+#TODO: CREATE RESUME VIEW CLEANER
+
 # CLEAN ALL
 def default_and_cleanse_rm(res):
     if not isinstance(res, dict):
@@ -559,6 +576,12 @@ def default_and_cleanse_rm(res):
     else:
         publications = DefaultRM.publications
 
+    res_view = res.get("Resume View", None)
+    if res_view is not None:
+        if not isinstance(res_view, dict):
+            res_view = DefaultRM.res_view
+    else:
+        res_view = DefaultRM.res_view
 
     return {
         "Contact Information": contact,
@@ -571,7 +594,8 @@ def default_and_cleanse_rm(res):
         "Awards and Honors": awards,
         "Volunteer Experience": volunteer_experience,
         "Languages": languages,
-        "Publications": publications 
+        "Publications": publications,
+        "Resume View": res_view
     } 
 
 def default_and_clean_jd(cur):
