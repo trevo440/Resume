@@ -32,11 +32,7 @@ graph TD;
     Client -->|API Calls| API
     Client -->|Client Key + Request| ClientLLM
     ClientLLM --> |Content| Client
-    API -->|Content| Client
-
-    API --> |Premium User |ServerLLM
-    ServerLLM --> |Content| API
-    
+    API -->|Content| Client    
     API -->|Auth Requests| Auth
     API -->|Cache Lookups| Datastore
     API -->|Caches Data| Datastore
