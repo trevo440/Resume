@@ -16,7 +16,9 @@ def session_setter(mapping, data):
 
 def session_getter(mapping):
     if session["user_auth"]:
-        data = redis_sessions_auth.hget(session["user_key"], mapping).decode('utf-8')
+        data = redis_sessions_auth.hget(session["user_key"], mapping)
+        if data is not None:
+            data = data.decode("utf-8")
         try:
             data = json.loads(data)
         except json.JSONDecodeError:

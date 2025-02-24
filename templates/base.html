@@ -112,6 +112,7 @@ window.appConfig = {
     clientUUID: "{{ client_uuid }}",
     csrfToken: "{{ csrf_token }}"
 };
+
 document.addEventListener('DOMContentLoaded', function() {
     // Toggle fullscreen for all card-premium elements
     document.querySelectorAll('.card-premium').forEach(cardPremium => {
@@ -135,7 +136,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
-
 {% block script %}{% endblock %}
 </html>

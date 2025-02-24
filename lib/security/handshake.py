@@ -7,7 +7,6 @@ def handshake_required(func):
     def decorated_function(*args, **kwargs):
         client_uuid = request.headers.get("X-Client-UUID")
         csrf_token = request.headers.get("X-CSRF-Token")
-
         if client_uuid != session.get("client_uuid"):
             return jsonify({"status": "error", "message": "Invalid UUID"}), 403
         if csrf_token != session.get("csrf_token"):

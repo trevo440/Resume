@@ -115,17 +115,24 @@
         <h4>Candidate Resume</h4>
         <div class="cur-content">
             {% if res %}
-                <form method="POST" action="{{ url_for('set_resume_sections') }}">
+                <form method="POST" action="{{ url_for('set_resume_sections') }}" id="resume-update-sections">
                     <!-- Contact Information -->
                     <div class="cur-item">
                         <h4>Contact Information</h4>
-                        {% for field, value in res['Contact Information'].items() %}
-                            <div class="cur-subitem">
-                                <span class="cur-key">{{ field.replace('_', ' ').title() }}:</span>
-                                <input type="text" name="contact_{{ field }}" value="{{ value }}" class="form-input">
-                            </div>
-                        {% endfor %}
+                        <table class="cur-table">
+                            <tbody>
+                                {% for field, value in res['Contact Information'].items() %}
+                                <tr class="cur-subitem">
+                                    <td class="cur-key">{{ field.replace('_', ' ').title() }}:</td>
+                                    <td>
+                                        <input type="text" name="contact_{{ field }}" value="{{ value }}" class="form-input">
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
+                    
     
                     <!-- Summary or Objective -->
                     <div class="cur-item">
@@ -231,14 +238,15 @@
 
 {% block script %}
 <script type="module" src="{{ url_for('static', filename='js/PersistDataJD.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/UpdateSections.js') }}"></script>
 <script>
+    
     document.addEventListener("DOMContentLoaded", function() {
-        
         const jobDesc = localStorage.getItem("job_description_raw");
         if (jobDesc) {
             document.getElementById("job-desc").value = jobDesc;
         }
-        
     });
+
 </script>
 {% endblock %}
