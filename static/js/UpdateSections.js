@@ -18,7 +18,7 @@ import { apiRequest } from "./Handshake.js";
 //         });
 // });
 
-let activeTabId = null;
+let activeTabId = "tab1";
 
 document.addEventListener("DOMContentLoaded", function () {
     const tabs = document.querySelectorAll(".tab");
@@ -59,7 +59,5 @@ class ButtonOrganizer {
 // Usage Example
 document.addEventListener("DOMContentLoaded", () => {
     const buttonOrganizer = new ButtonOrganizer("#buttonContainer");
-
     buttonOrganizer.addButton("saveBtn", "Save", () => console.log("Save clicked"));
-    buttonOrganizer.addButton("cancelBtn", "Cancel", () => console.log("Cancel clicked"));
 });
